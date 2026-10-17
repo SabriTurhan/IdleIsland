@@ -8,5 +8,6 @@ namespace Watermelon
         Capacity = 1,
         Gathering = 2,
         SwimmingDuration = 3,
+        Sword = 4,
     }
 }

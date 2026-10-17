@@ -302,3 +302,93 @@ MonoBehaviour:
       specialPrefab: {fileID: 0}
       appearAudioClip: {fileID: 0}
       collectAudioClip: {fileID: 0}
+  - currencyType: 4
+    defaultAmount: 0
+    icon: {fileID: 21300000, guid: a4bc87fe9400a478fb6ae6256b507a27, type: 3}
+    data:
+      displayAlways: 0
+      flyingResPrefab: {fileID: 5110331586252409839, guid: 292c447257cb04e889072926a5a06d7d,
+        type: 3}
+      dropResPrefab: {fileID: 8628162932439685213, guid: 0c0d3fe982c9545449f9b15528c8c852,
+        type: 3}
+      pickUpSound: {fileID: 0}
+      useInventory: 1
+      moneyConversionRate: 3
+    floatingCloud:
+      addToCloud: 1
+      radius: 200
+      specialPrefab: {fileID: 0}
+      appearAudioClip: {fileID: 0}
+      collectAudioClip: {fileID: 0}
+  - currencyType: 53
+    defaultAmount: 0
+    icon: {fileID: 21300000, guid: 6745408799d5c49efb6e81cc153e9281, type: 3}
+    data:
+      displayAlways: 0
+      flyingResPrefab: {fileID: 499172610494392662, guid: 5ab78f4db79704ccb912574b5c2e3ef8,
+        type: 3}
+      dropResPrefab: {fileID: 3831362833111529747, guid: ddfa894eadbbe4c62b8973e33eed9d69,
+        type: 3}
+      pickUpSound: {fileID: 0}
+      useInventory: 1
+      moneyConversionRate: 25
+    floatingCloud:
+      addToCloud: 1
+      radius: 200
+      specialPrefab: {fileID: 0}
+      appearAudioClip: {fileID: 0}
+      collectAudioClip: {fileID: 0}
+  - currencyType: 54
+    defaultAmount: 0
+    icon: {fileID: 21300000, guid: 645fafcdfc6b449708e01520dbc2413c, type: 3}
+    data:
+      displayAlways: 0
+      flyingResPrefab: {fileID: 1327569298012330044, guid: f42aa2e5523f846d5b0e2a906e846a4d,
+        type: 3}
+      dropResPrefab: {fileID: 458860321881589289, guid: 8150cfc2b5ad641a99a770f4f5ed887b,
+        type: 3}
+      pickUpSound: {fileID: 0}
+      useInventory: 1
+      moneyConversionRate: 30
+    floatingCloud:
+      addToCloud: 1
+      radius: 200
+      specialPrefab: {fileID: 0}
+      appearAudioClip: {fileID: 0}
+      collectAudioClip: {fileID: 0}
+  - currencyType: 501
+    defaultAmount: 0
+    icon: {fileID: 21300000, guid: e78767669fa4c407a91bd9001277383d, type: 3}
+    data:
+      displayAlways: 0
+      flyingResPrefab: {fileID: 3798345094305024618, guid: 827c1651acb154b769548a459b66a8fc,
+        type: 3}
+      dropResPrefab: {fileID: 7980898403342548361, guid: 851031ae17674449496be74f9480c2a2,
+        type: 3}
+      pickUpSound: {fileID: 0}
+      useInventory: 0
+      moneyConversionRate: 0
+    floatingCloud:
+      addToCloud: 1
+      radius: 200
+      specialPrefab: {fileID: 0}
+      appearAudioClip: {fileID: 0}
+      collectAudioClip: {fileID: 0}
+  - currencyType: 502
+    defaultAmount: 0
+    icon: {fileID: 21300000, guid: daea259a1cb5149eca54eae642268172, type: 3}
+    data:
+      displayAlways: 0
+      flyingResPrefab: {fileID: 5250103752790267986, guid: bb44e631c85fe4cf18893f477883aa99,
+        type: 3}
+      dropResPrefab: {fileID: 3989589246943969239, guid: 1901ffe0f8223469998c21987ff63bb0,
+        type: 3}
+      pickUpSound: {fileID: 0}
+      useInventory: 0
+      moneyConversionRate: 0
+    floatingCloud:
+      addToCloud: 1
+      radius: 200
+      specialPrefab: {fileID: 0}
+      appearAudioClip: {fileID: 0}
+      collectAudioClip: {fileID: 0}

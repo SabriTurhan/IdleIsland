@@ -12,9 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 84a92b25f83d49b9bc132d206b370281, type: 3}
   m_Name: Generated Atlas
   m_EditorClassIdentifier: 
-  hashCode: -2126247036
-  material: {fileID: 4715623949491201169}
-  materialHashCode: 0
   m_Version: 1.1.0
   m_FaceInfo:
     m_FaceIndex: 0
@@ -38,6 +35,7 @@ MonoBehaviour:
     m_StrikethroughOffset: 0
     m_StrikethroughThickness: 0
     m_TabWidth: 0
+  m_Material: {fileID: 4715623949491201169}
   spriteSheet: {fileID: 2800000, guid: 3c1fa8667ce622347bf32b492c2d9cb7, type: 3}
   m_SpriteCharacterTable:
   - m_ElementType: 2
@@ -45,98 +43,82 @@ MonoBehaviour:
     m_GlyphIndex: 0
     m_Scale: 1
     m_Name: Coins
-    m_HashCode: 80886904
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 1
     m_Scale: 1
     m_Name: Wood
-    m_HashCode: 3161459
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 2
     m_Scale: 1
     m_Name: Stone
-    m_HashCode: 99184899
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 3
     m_Scale: 1
     m_Name: Fiber
-    m_HashCode: 86749658
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 4
     m_Scale: 1
     m_Name: Planks
-    m_HashCode: -1186786709
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 5
     m_Scale: 1
     m_Name: Bricks
-    m_HashCode: -1584667678
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 6
     m_Scale: 1
     m_Name: Rope
-    m_HashCode: 3066088
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 7
     m_Scale: 1
     m_Name: Berries
-    m_HashCode: -1027639080
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 8
     m_Scale: 1
     m_Name: Coconut
-    m_HashCode: -2092978833
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 9
     m_Scale: 1
     m_Name: Pumpkin
-    m_HashCode: -1477303084
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 10
     m_Scale: 1
     m_Name: Fish
-    m_HashCode: 2629332
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 11
     m_Scale: 1
     m_Name: Jam
-    m_HashCode: 83750
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 12
     m_Scale: 1
     m_Name: BigJam
-    m_HashCode: -1588559414
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 13
     m_Scale: 1
     m_Name: CookedFish
-    m_HashCode: 1819794333
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 14
     m_Scale: 1
     m_Name: Soup
-    m_HashCode: 3025721
   - m_ElementType: 2
     m_Unicode: 65534
     m_GlyphIndex: 15
     m_Scale: 1
     m_Name: Scissors
-    m_HashCode: 411818775
-  m_SpriteGlyphTable:
+  m_GlyphTable:
   - m_Index: 0
     m_Metrics:
       m_Width: 128
@@ -394,7 +376,8 @@ MonoBehaviour:
     m_ClassDefinitionType: 0
     sprite: {fileID: 21300000, guid: 21dc7a05d087aef4b96828af160d8ecf, type: 3}
   spriteInfoList: []
-  fallbackSpriteAssets: []
+  fallbackSpriteAssets:
+  - {fileID: 11400000, guid: 952f5247434b446668f37204f1d47390, type: 2}
 --- !u!21 &4715623949491201169
 Material:
   serializedVersion: 8
@@ -436,3 +419,4 @@ Material:
     - _ClipRect: {r: -32767, g: -32767, b: 32767, a: 32767}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
+  m_AllowLocking: 1
