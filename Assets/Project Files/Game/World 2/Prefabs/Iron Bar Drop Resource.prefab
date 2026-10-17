@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 231bca63294b1d849bae0ac637f9f634, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  currencyType: 51
+  currencyType: 53
   verticalOffset: 0
 --- !u!65 &2007377101764965938
 BoxCollider:

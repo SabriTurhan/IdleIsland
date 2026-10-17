@@ -58,8 +58,8 @@ namespace Watermelon.World2
 
                     prefabs[resource.Type] = new[]
                     {
-                        ClonePickable("Pickable Resources", resource.Template, "Drop Resource", resource.Name + " Drop Resource", mesh, material),
-                        ClonePickable("Flying Resources", resource.Template, "Fly Resourse", resource.Name + " Fly Resourse", mesh, material),
+                        ClonePickable("Pickable Resources", resource.Template, "Drop Resource", resource.Name + " Drop Resource", mesh, material, resource.Type),
+                        ClonePickable("Flying Resources", resource.Template, "Fly Resourse", resource.Name + " Fly Resourse", mesh, material, resource.Type),
                     };
 
                     Texture2D icon = iconRenderer.RenderMesh(mesh, material, resource.IconEuler);
@@ -77,7 +77,7 @@ namespace Watermelon.World2
         }
 
         // copies the template currency prefab (behaviour, collider, animation) and swaps the model
-        private static GameObject ClonePickable(string folder, CurrencyType template, string suffix, string name, Mesh mesh, Material material)
+        private static GameObject ClonePickable(string folder, CurrencyType template, string suffix, string name, Mesh mesh, Material material, CurrencyType type)
         {
             string templateName = template == CurrencyType.Bricks ? "Brick" : template.ToString();
             // template prefabs are named "<Name> Fly Resource" or "<Name> Fly Resourse"
@@ -99,6 +99,18 @@ namespace Watermelon.World2
             filter.sharedMesh = mesh;
             filter.name = name.Replace(" " + suffix, "");
             filter.GetComponent<MeshRenderer>().sharedMaterial = material;
+
+            // the template prefab names its own currency: the picked up / arriving item would be added as that currency
+            foreach (MonoBehaviour behaviour in instance.GetComponents<MonoBehaviour>())
+            {
+                SerializedObject serialized = new SerializedObject(behaviour);
+                foreach (string field in new[] { "resourceType", "currencyType" })
+                {
+                    SerializedProperty property = serialized.FindProperty(field);
+                    if (property != null) property.intValue = (int)type;
+                }
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             BoxCollider collider = instance.GetComponent<BoxCollider>();
             if (collider != null)
