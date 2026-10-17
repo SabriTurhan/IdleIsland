@@ -70,7 +70,7 @@ namespace Watermelon.World2
 
             UpdateCurrencyDatabase(icons, prefabs);
             BuildIronOreSource(material);
-            BuildSpriteAtlas(icons);
+            RebuildSpriteAtlas();
 
             AssetDatabase.SaveAssets();
             Debug.Log("[World 2] Resources built");
@@ -224,21 +224,42 @@ namespace Watermelon.World2
             return material;
         }
 
+        // icons that appear in texts without being currencies
+        private static readonly string[] EXTRA_ICONS = { "Skull", "Sword" };
+
         // second TMP sprite asset with the new icons, registered as a fallback of the default one
-        private static void BuildSpriteAtlas(Dictionary<CurrencyType, Sprite> icons)
+        public static void RebuildSpriteAtlas()
+        {
+            List<KeyValuePair<string, Sprite>> icons = new List<KeyValuePair<string, Sprite>>();
+            foreach (ResourceDefinition resource in RESOURCES)
+            {
+                Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(PirateArtAssets.ROOT + "/Icons/ic_" + resource.Name.ToLower().Replace(' ', '_') + ".png");
+                if (sprite != null) icons.Add(new KeyValuePair<string, Sprite>(resource.Type.ToString(), sprite));
+            }
+
+            foreach (string extra in EXTRA_ICONS)
+            {
+                Sprite sprite = AssetDatabase.LoadAssetAtPath<Sprite>(PirateArtAssets.ROOT + "/Icons/ic_" + extra.ToLower() + ".png");
+                if (sprite != null) icons.Add(new KeyValuePair<string, Sprite>(extra, sprite));
+            }
+
+            BuildSpriteAtlas(icons);
+        }
+
+        private static void BuildSpriteAtlas(List<KeyValuePair<string, Sprite>> icons)
         {
             const int CELL = 128;
             int columns = 4;
-            int rows = Mathf.CeilToInt(RESOURCES.Length / (float)columns);
+            int rows = Mathf.CeilToInt(icons.Count / (float)columns);
             int width = columns * CELL, height = Mathf.NextPowerOfTwo(rows * CELL);
 
             Texture2D sheet = new Texture2D(width, height, TextureFormat.RGBA32, false);
             sheet.SetPixels(new Color[width * height]);
 
             List<Rect> rects = new List<Rect>();
-            for (int i = 0; i < RESOURCES.Length; i++)
+            for (int i = 0; i < icons.Count; i++)
             {
-                string path = AssetDatabase.GetAssetPath(icons[RESOURCES[i].Type]);
+                string path = AssetDatabase.GetAssetPath(icons[i].Value);
                 Texture2D source = new Texture2D(2, 2);
                 source.LoadImage(File.ReadAllBytes(Path.Combine(Path.GetDirectoryName(Application.dataPath), path)));
 
@@ -285,7 +306,7 @@ namespace Watermelon.World2
             spriteAsset.spriteGlyphTable.Clear();
             spriteAsset.spriteCharacterTable.Clear();
 
-            for (int i = 0; i < RESOURCES.Length; i++)
+            for (int i = 0; i < icons.Count; i++)
             {
                 Rect rect = rects[i];
                 TMP_SpriteGlyph glyph = new TMP_SpriteGlyph
@@ -298,7 +319,7 @@ namespace Watermelon.World2
                 };
                 spriteAsset.spriteGlyphTable.Add(glyph);
 
-                TMP_SpriteCharacter character = new TMP_SpriteCharacter(0xFFFE, glyph) { name = RESOURCES[i].Type.ToString(), scale = 1f };
+                TMP_SpriteCharacter character = new TMP_SpriteCharacter(0xFFFE, glyph) { name = icons[i].Key, scale = 1f };
                 spriteAsset.spriteCharacterTable.Add(character);
             }
 

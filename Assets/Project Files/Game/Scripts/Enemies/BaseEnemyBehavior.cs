@@ -12,6 +12,10 @@ namespace Watermelon
         private static readonly int DIE_TRIGGER = Animator.StringToHash("Die");
 
         private static readonly int _EmissionColor = Shader.PropertyToID("_EmissionColor");
+        private static readonly int DAMAGE_TEXT_HASH = "Floating".GetHashCode();
+
+        // any enemy killed by the player (used by kill missions)
+        public static event System.Action<BaseEnemyBehavior> OnEnemyKilled;
 
         protected Dictionary<EnemyAnimationEventType, SimpleCallback> animationCallbacks;
 
@@ -62,6 +66,19 @@ namespace Watermelon
         protected IStateMachine stateMachine;
 
         [SerializeField] float health;
+
+        [SerializeField] EnemyType enemyType = EnemyType.Skeleton;
+        public EnemyType EnemyType => enemyType;
+
+        // distance at which the enemy stops chasing and attacks (template skeleton: 1)
+        [SerializeField] float attackRange = 1f;
+        public float AttackRange => attackRange;
+
+        // shows the hit damage above the enemy
+        [SerializeField] bool showDamageNumbers = true;
+
+        public float CurrentHealth => Health.CurrentHealth;
+        public float MaxHealth => Health.MaxHealth;
 
         public Transform SpawnPoint { get; private set; }
 
@@ -127,9 +144,15 @@ namespace Watermelon
         {
             Health.Subtract(source.Damage);
 
+            if (showDamageNumbers && source.Damage > 0)
+                FloatingTextController.SpawnFloatingText(DAMAGE_TEXT_HASH, "-" + Mathf.RoundToInt(source.Damage), transform.position + new Vector3(Random.Range(-0.3f, 0.3f), 2.3f * transform.localScale.y, 0), Quaternion.identity, 0.8f, new Color(1f, 0.85f, 0.3f));
+
             if (Health.IsDepleted)
             {
                 IsDead = true;
+
+                OnEnemyKilled?.Invoke(this);
+                OnKilled();
 
                 stateMachine.StopMachine();
 
@@ -167,7 +190,11 @@ namespace Watermelon
         public void MoveToPlayer()
         {
             agent.SetDestination(PlayerBehavior.Position);
-            agent.stoppingDistance = 1;
+            agent.stoppingDistance = attackRange;
+        }
+
+        protected virtual void OnKilled()
+        {
         }
 
         public void Attack()
@@ -253,7 +280,8 @@ namespace Watermelon
         {
             lastHitSourcePosition = hitSourcePosition;
             lastHitter = hitter;
-            TakeDamage(new DamageSource(1, PlayerBehavior.GetBehavior()), PlayerBehavior.Position, true);
+            // the sword level bought at the World 2 blacksmith (1 before any upgrade)
+            TakeDamage(new DamageSource(SwordUpgrade.CurrentDamage, PlayerBehavior.GetBehavior()), PlayerBehavior.Position, true);
         }
 
         protected virtual void FlashOnHit()

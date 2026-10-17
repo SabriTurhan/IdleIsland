@@ -37,7 +37,7 @@ namespace Watermelon
 
             if (PlayerBehavior.GetBehavior() == null) return false;
 
-            return Vector3.Distance(PlayerBehavior.Position, enemy.transform.position) < 5f;
+            return Vector3.Distance(PlayerBehavior.Position, enemy.transform.position) < enemy.DetectionDistance;
         }
         private bool AttackingStateTransition(out State nextState)
         {
@@ -45,7 +45,7 @@ namespace Watermelon
 
             if (PlayerBehavior.GetBehavior() == null) return false;
 
-            return Vector3.Distance(PlayerBehavior.Position, enemy.transform.position) > 10f;
+            return Vector3.Distance(PlayerBehavior.Position, enemy.transform.position) > enemy.LeashDistance;
         }
 
         public enum State

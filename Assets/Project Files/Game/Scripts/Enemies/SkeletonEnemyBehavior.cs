@@ -6,6 +6,16 @@ namespace Watermelon
 {
     public class SkeletonEnemyBehavior : BaseEnemyBehavior
     {
+        [SerializeField] int attackDamage = 10;
+        public int AttackDamage => attackDamage;
+
+        // the skeleton notices the player at this distance and gives up the chase at the leash distance
+        [SerializeField] float detectionDistance = 5f;
+        public float DetectionDistance => detectionDistance;
+
+        [SerializeField] float leashDistance = 10f;
+        public float LeashDistance => leashDistance;
+
         protected override void Awake()
         {
             base.Awake();
@@ -18,11 +28,11 @@ namespace Watermelon
             animationCallbacks.Add(EnemyAnimationEventType.DropResourcesOnDeath, SpawnDrop);
         }
 
-        public void OnHit()
+        public virtual void OnHit()
         {
-            if (Vector3.Distance(transform.position, PlayerBehavior.Position) < 1)
+            if (Vector3.Distance(transform.position, PlayerBehavior.Position) < AttackRange)
             {
-                PlayerBehavior.GetBehavior().TakeDamage(new DamageSource(10, this), transform.position, true);
+                PlayerBehavior.GetBehavior().TakeDamage(new DamageSource(attackDamage, this), transform.position, true);
             }
         }
     }

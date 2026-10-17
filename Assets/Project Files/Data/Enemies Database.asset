@@ -16,3 +16,12 @@ MonoBehaviour:
   - enemyType: 1
     prefab: {fileID: 6026344760361177115, guid: da46134e161a3464993ffdc974ed7aba,
       type: 3}
+  - enemyType: 2
+    prefab: {fileID: 5582825836614475172, guid: 8d5027af9cf3e469e995c7789ac79bd9,
+      type: 3}
+  - enemyType: 3
+    prefab: {fileID: 8381763045488703921, guid: 218ed03f27e86414ea584b81ad04922d,
+      type: 3}
+  - enemyType: 10
+    prefab: {fileID: 3978655953149313108, guid: 2b27a7f60a38445969d0dead795a83b1,
+      type: 3}

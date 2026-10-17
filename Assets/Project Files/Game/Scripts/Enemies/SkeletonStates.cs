@@ -52,7 +52,7 @@ namespace Watermelon.Enemy.Skeleton
 
             if (PlayerBehavior.GetBehavior() == null) return;
 
-            if(Vector3.Distance(Position, PlayerBehavior.Position) > 1)
+            if(Vector3.Distance(Position, PlayerBehavior.Position) > Target.AttackRange)
             {
                 if(Time.frameCount % 10 == 2)
                 {
