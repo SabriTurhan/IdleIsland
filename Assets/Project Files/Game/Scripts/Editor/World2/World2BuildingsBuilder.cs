@@ -31,6 +31,7 @@ namespace Watermelon.World2
             Material material = AssetDatabase.LoadAssetAtPath<Material>(PirateArtAssets.MATERIAL_PATH);
             Material glow = AssetDatabase.LoadAssetAtPath<Material>(PirateArtAssets.MATERIAL_GLOW_PATH);
 
+            FixTemplateUpgradeIcons();
             BuildTorchTable(material, glow);
             BuildForge(material, glow);
             BuildSailLoom(material);
@@ -129,6 +130,8 @@ namespace Watermelon.World2
             table.GetComponent<MeshRenderer>().sharedMaterial = material;
             AddMesh(table, "Fire", PirateArtAssets.SaveMesh(PirateModels.ForgeFire()), glow, Vector3.zero, Vector3.zero);
 
+            SetUpgradeInfo(instance, "Forge", PirateArtAssets.ROOT + "/Icons/ic_forge_cap.png", PirateArtAssets.ROOT + "/Icons/ic_forge_spd.png");
+
             Save(instance, FORGE);
         }
 
@@ -143,6 +146,8 @@ namespace Watermelon.World2
             for (int i = table.childCount - 1; i >= 0; i--) Object.DestroyImmediate(table.GetChild(i).gameObject);
             table.GetComponent<MeshFilter>().sharedMesh = PirateArtAssets.SaveMesh(PirateModels.SailLoom());
             table.GetComponent<MeshRenderer>().sharedMaterial = material;
+
+            SetUpgradeInfo(instance, "Sail Loom", PirateArtAssets.ROOT + "/Icons/ic_loom_cap.png", PirateArtAssets.ROOT + "/Icons/ic_loom_spd.png");
 
             Save(instance, SAIL_LOOM);
         }
@@ -212,6 +217,63 @@ namespace Watermelon.World2
             }
 
             Save(instance, path);
+        }
+
+        private const string UPGRADE_ICON_TEMPLATE = "Assets/Project Files/Game/Images/Upgrades/ic_scissors_craft_cap.png";
+        private const string UPGRADE_DESCRIPTION = "Increase from <color=#FF4233>{0}</color> to <color=#56D103>{1}";
+
+        // capacity / speed upgrades of a converter: icon (product + badge), title and description like the scissors table
+        private static void SetUpgradeInfo(GameObject root, string name, string capacityIcon, string speedIcon)
+        {
+            foreach (AbstractLocalUpgrade upgrade in root.GetComponentsInChildren<AbstractLocalUpgrade>(true))
+            {
+                bool capacity = upgrade is ConverterCapacityUpgrade;
+                bool speed = upgrade is SimpleFloatUpgrade;
+                if (!capacity && !speed) continue;
+
+                SerializedObject serialized = new SerializedObject(upgrade);
+                serialized.FindProperty("title").stringValue = name + (capacity ? " Capacity" : " Speed");
+                serialized.FindProperty("icon").objectReferenceValue = ImportUpgradeIcon(capacity ? capacityIcon : speedIcon);
+                serialized.FindProperty("descriptionFormat").stringValue = UPGRADE_DESCRIPTION;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+        }
+
+        private static Sprite ImportUpgradeIcon(string path)
+        {
+            TextureImporter importer = (TextureImporter)AssetImporter.GetAtPath(path);
+            TextureImporter template = (TextureImporter)AssetImporter.GetAtPath(UPGRADE_ICON_TEMPLATE);
+            if (importer != null && importer.textureType != TextureImporterType.Sprite)
+            {
+                TextureImporterSettings settings = new TextureImporterSettings();
+                template.ReadTextureSettings(settings);
+                importer.SetTextureSettings(settings);
+                importer.textureType = TextureImporterType.Sprite;
+                importer.spriteImportMode = SpriteImportMode.Single;
+                importer.alphaIsTransparency = true;
+                importer.SaveAndReimport();
+            }
+
+            return AssetDatabase.LoadAssetAtPath<Sprite>(path);
+        }
+
+        // the template's bricks and ropes tables shipped without upgrade icons (ropes icons existed but were not assigned)
+        private static void FixTemplateUpgradeIcons()
+        {
+            (string prefab, string name, string capacity, string speed)[] tables =
+            {
+                ("Bricks Craft Table", "Bricks Craft", "Assets/Project Files/Game/Images/Upgrades/ic_bricks_craft_cap.png", "Assets/Project Files/Game/Images/Upgrades/ic_bricks_craft_spd.png"),
+                ("Ropes Craft Table", "Ropes Craft", "Assets/Project Files/Game/Images/Upgrades/ic_ropes_craft_cap.png", "Assets/Project Files/Game/Images/Upgrades/ic_ropes_craft_spd.png"),
+            };
+
+            foreach (var table in tables)
+            {
+                string path = TEMPLATES + table.prefab + ".prefab";
+                GameObject contents = PrefabUtility.LoadPrefabContents(path);
+                SetUpgradeInfo(contents, table.name, table.capacity, table.speed);
+                PrefabUtility.SaveAsPrefabAsset(contents, path);
+                PrefabUtility.UnloadPrefabContents(contents);
+            }
         }
 
         private class PropDefinition
