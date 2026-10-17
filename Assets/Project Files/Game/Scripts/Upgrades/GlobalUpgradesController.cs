@@ -75,7 +75,8 @@ namespace Watermelon
         public static void OpenMainUpgradesPage()
         {
             uiUpgrades.ResetUpgrades();
-            uiUpgrades.RegisterUpgrades(ActiveUpgrades.ConvertAll(upgrade => (IUpgrade)upgrade));
+            // the sword is sold at the World 2 blacksmith only
+            uiUpgrades.RegisterUpgrades(ActiveUpgrades.FindAll(upgrade => upgrade.GlobalUpgradeType != GlobalUpgradeType.Sword).ConvertAll(upgrade => (IUpgrade)upgrade));
             uiUpgrades.RegisterUpgrades(globalSimpleUpgrades.FindAll(upgrade => !IsLocked(upgrade)));
 
             UIController.ShowPage<UIUpgrades>();
