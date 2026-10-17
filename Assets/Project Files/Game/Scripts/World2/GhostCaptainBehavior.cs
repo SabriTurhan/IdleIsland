@@ -11,10 +11,10 @@ namespace Watermelon
         [SerializeField] string bossTitle = "GHOST CAPTAIN GRIMBEARD";
         public string BossTitle => bossTitle;
 
-        [SerializeField] float slamInterval = 6.5f;
+        [SerializeField] float slamInterval = 7f;
         [SerializeField] float slamTelegraph = 1.3f;
         [SerializeField] float slamRadius = 3.4f;
-        [SerializeField] int slamDamage = 30;
+        [SerializeField] int slamDamage = 20;
         [SerializeField] Material slamMaterial;
 
         [SerializeField] float[] summonThresholds = { 0.66f, 0.33f };
@@ -31,6 +31,20 @@ namespace Watermelon
         public bool IsEngaged { get; private set; }
 
         public event SimpleCallback OnBossDefeated;
+
+        // the fight restarts when the player dies or leaves the crypt
+        public void Despawn()
+        {
+            if (slamRing != null) slamRing.SetActive(false);
+
+            foreach (BaseEnemyBehavior minion in minions)
+            {
+                if (minion != null && minion.gameObject.activeSelf) minion.Unload();
+            }
+            minions.Clear();
+
+            Unload();
+        }
 
         public void ResetBoss()
         {

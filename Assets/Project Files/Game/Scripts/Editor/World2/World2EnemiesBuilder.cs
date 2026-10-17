@@ -39,19 +39,19 @@ namespace Watermelon.World2
         {
             new EnemyDefinition
             {
-                Type = EnemyType.PirateSkeleton, Name = "Pirate Skeleton", Health = 12, Damage = 12, AttackRange = 1.05f, Speed = 1.8f, Scale = 1f,
+                Type = EnemyType.PirateSkeleton, Name = "Pirate Skeleton", Health = 8, Damage = 8, AttackRange = 1.05f, Speed = 1.8f, Scale = 1f,
                 Detection = 6f, Leash = 12f, Coins = 8, Tint = new Color(1f, 0.96f, 0.9f), Emission = Color.black,
                 HeadAccessories = new System.Func<Mesh>[] { PirateModels.Bandana }, Cutlass = true,
             },
             new EnemyDefinition
             {
-                Type = EnemyType.SkeletonBrute, Name = "Skeleton Brute", Health = 35, Damage = 22, AttackRange = 1.5f, Speed = 1.2f, Scale = 1.4f,
+                Type = EnemyType.SkeletonBrute, Name = "Skeleton Brute", Health = 24, Damage = 14, AttackRange = 1.5f, Speed = 1.2f, Scale = 1.4f,
                 Detection = 6.5f, Leash = 13f, Coins = 25, Tint = new Color(0.78f, 0.8f, 0.82f), Emission = Color.black,
                 HeadAccessories = new System.Func<Mesh>[] { PirateModels.HornedHelmet }, Cutlass = false,
             },
             new EnemyDefinition
             {
-                Type = EnemyType.GhostCaptain, Name = "Ghost Captain", Boss = true, Health = 150, Damage = 18, AttackRange = 2.0f, Speed = 1.7f, Scale = 2f,
+                Type = EnemyType.GhostCaptain, Name = "Ghost Captain", Boss = true, Health = 80, Damage = 9, AttackRange = 2.0f, Speed = 1.7f, Scale = 2f,
                 Detection = 11f, Leash = 30f, Coins = 300, Tint = new Color(0.55f, 1f, 0.95f), Emission = new Color(0.12f, 0.45f, 0.42f),
                 HeadAccessories = new System.Func<Mesh>[] { PirateModels.TricornHat, PirateModels.GhostBeard, PirateModels.GlowingEyes }, Cutlass = true,
             },

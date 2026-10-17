@@ -518,6 +518,8 @@ namespace Watermelon.World2
                 raft.transform.position = wreck + new Vector3(0, -0.15f, 0);
                 raft.transform.rotation = Quaternion.Euler(8, 35, -6);
                 raft.AddComponent<UnityEngine.AI.NavMeshObstacle>().carving = true;
+                foreach (Renderer renderer in raft.GetComponentsInChildren<Renderer>(true))
+                    renderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Project Files/Game/Materials/Buildings.mat");
             }
             AddProp(context, "Barrel", decor, wreck + new Vector3(2.0f, 0, 0.6f), 30f);
             AddProp(context, "Crate", decor, wreck + new Vector3(-1.9f, 0, 0.4f), 15f);
@@ -765,6 +767,8 @@ namespace Watermelon.World2
             Unlock(context, "crypt", "Find the captain's crypt", '8', CurrencyType.Coins, 60);
             SubworldEnterMission enter = AddMission<SubworldEnterMission>(context, "enter crypt", "Enter the crypt");
             Set(enter, "subworldEntranceRef", context.CaveEntrance);
+            // the template mission also reads the base class entrance (pointer and enter event)
+            Set(enter, "subworldEntrance", context.CaveEntrance);
             Reward(enter, CurrencyType.Coins, 10);
             KillEnemiesMission boss = AddMission<KillEnemiesMission>(context, "ghost captain", "Defeat the Ghost Captain");
             Set(boss, "anyEnemyType", false);
@@ -820,6 +824,7 @@ namespace Watermelon.World2
             storySerialized.FindProperty("stormWeather").objectReferenceValue = AssetDatabase.LoadAssetAtPath<EnvironmentWeatherPreset>("Assets/Project Files/Data/Environment/Weather/Storm.asset");
             storySerialized.FindProperty("arrivalWeather").objectReferenceValue = AssetDatabase.LoadAssetAtPath<EnvironmentWeatherPreset>("Assets/Project Files/Data/Environment/Weather/Clouds.asset");
             storySerialized.FindProperty("raftModel").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Project Files/Game/Models/Buildings/raft.fbx");
+            storySerialized.FindProperty("raftMaterial").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Material>("Assets/Project Files/Game/Materials/Buildings.mat");
             storySerialized.FindProperty("splashParticle").objectReferenceValue = AssetDatabase.LoadAssetAtPath<GameObject>(PREFABS + "Particles/Characters/Water Splash.prefab");
             storySerialized.FindProperty("font").objectReferenceValue = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>("Assets/Project Files/Game/Fonts/FredokaOne/FredokaOne 50/FredokaOne 50 Outline.asset");
             storySerialized.FindProperty("buttonSprite").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Project Files/Game/Images/Base/UI Flat/btn_green_flat.png");
@@ -827,7 +832,8 @@ namespace Watermelon.World2
             storySerialized.ApplyModifiedPropertiesWithoutUndo();
         }
 
-        // every [UniqueID] field gets a fresh id so saves never mix with World 1
+        // every [UniqueID] field gets an id derived from the object's place in the hierarchy: never equal to World 1,
+        // and stable between rebuilds so existing World 2 saves keep working
         private static void RegenerateIds()
         {
             foreach (MonoBehaviour behaviour in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -844,12 +850,23 @@ namespace Watermelon.World2
 
                         serialized ??= new SerializedObject(behaviour);
                         SerializedProperty property = serialized.FindProperty(field.Name);
-                        if (property != null) property.stringValue = System.Guid.NewGuid().ToString();
+                        if (property != null) property.stringValue = StableId(behaviour, field.Name);
                     }
                 }
 
                 serialized?.ApplyModifiedPropertiesWithoutUndo();
             }
+        }
+
+        private static string StableId(Component component, string field)
+        {
+            System.Text.StringBuilder path = new System.Text.StringBuilder(WORLD2_SAVE_NAME);
+            for (Transform current = component.transform; current != null; current = current.parent)
+                path.Insert(0, "/" + current.name + "#" + current.GetSiblingIndex());
+            path.Append("|" + component.GetType().Name + "|" + field);
+
+            using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
+                return new System.Guid(md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(path.ToString()))).ToString();
         }
 
         // World 2 in the worlds database now points to this scene (same world id, so existing saves continue here)

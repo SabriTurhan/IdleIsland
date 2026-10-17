@@ -17,8 +17,9 @@ namespace Watermelon
         [SerializeField] EnvironmentWeatherPreset stormWeather;
         [SerializeField] EnvironmentWeatherPreset arrivalWeather;
         [SerializeField] GameObject raftModel;
+        [SerializeField] Material raftMaterial;
         [SerializeField] GameObject splashParticle;
-        [SerializeField] float seaDistance = 32f;
+        [SerializeField] float seaDistance = 42f;
 
         [Header("UI")]
         [SerializeField] TMP_FontAsset font;
@@ -32,6 +33,7 @@ namespace Watermelon
         private Canvas canvas;
         private Image black;
         private Image flash;
+        private Image stormTint;
         private TextMeshProUGUI caption;
         private TextMeshProUGUI title;
         private TextMeshProUGUI subtitle;
@@ -92,6 +94,10 @@ namespace Watermelon
                 GameObject model = Instantiate(raftModel, raft.transform);
                 model.transform.localPosition = Vector3.zero;
                 model.transform.localRotation = Quaternion.Euler(0, 90, 0);
+                if (raftMaterial != null)
+                {
+                    foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>(true)) renderer.sharedMaterial = raftMaterial;
+                }
             }
 
             Transform seat = new GameObject("Seat").transform;
@@ -107,6 +113,8 @@ namespace Watermelon
 
             if (virtualCamera != null) virtualCamera.SetTarget(raft.transform);
 
+            // dark storm light over everything
+            stormTint.color = new Color(0.05f, 0.08f, 0.2f, 0.38f);
             yield return Fade(black, 1f, 0f, 1.2f);
             yield return ShowCaption("A storm caught your raft at sea...", 2.2f, false);
 
@@ -157,6 +165,7 @@ namespace Watermelon
             yield return new WaitForSeconds(0.4f);
 
             // washed ashore
+            stormTint.color = Color.clear;
             player.transform.SetParent(playerParent, true);
             Destroy(raft);
 
@@ -283,6 +292,7 @@ namespace Watermelon
             scaler.matchWidthOrHeight = 0.5f;
             canvas.gameObject.AddComponent<GraphicRaycaster>();
 
+            stormTint = FullScreen("Storm Tint", Color.clear);
             black = FullScreen("Black", new Color(0, 0, 0, 0));
             flash = FullScreen("Flash", new Color(1, 1, 1, 0));
 
@@ -313,6 +323,11 @@ namespace Watermelon
             text.rectTransform.sizeDelta = box;
             if (font != null) text.font = font;
             text.fontSize = size;
+            // shrink and wrap on narrow screens
+            text.enableAutoSizing = true;
+            text.fontSizeMin = size * 0.45f;
+            text.fontSizeMax = size;
+            text.textWrappingMode = TextWrappingModes.Normal;
             text.alignment = TextAlignmentOptions.Center;
             text.color = Color.white;
             text.raycastTarget = false;

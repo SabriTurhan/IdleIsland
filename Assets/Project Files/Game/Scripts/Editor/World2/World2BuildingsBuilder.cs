@@ -93,12 +93,14 @@ namespace Watermelon.World2
 
         private static void BuildTorchTable(Material material, Material glow)
         {
-            GameObject instance = Instantiate("Scissors Craft Table", "Torch Table");
+            // from the planks table: unlike the scissors table it has a purchase point, so it has to be built
+            GameObject instance = Instantiate("Planks Craft Table", "Torch Table");
             ResourceConverterBuildingBehavior converter = instance.GetComponentInChildren<ResourceConverterBuildingBehavior>(true);
             converter.name = "Torch Converter";
             SetRecipe(converter, CurrencyType.Torch, (CurrencyType.Wood, 1), (CurrencyType.Fiber, 1));
 
-            Transform table = converter.transform.Find("Visuals Opened/Table");
+            Transform table = converter.transform.Find("Opened Visuals/Table");
+            for (int i = table.childCount - 1; i >= 0; i--) Object.DestroyImmediate(table.GetChild(i).gameObject);
             Mesh barrel = PirateArtAssets.SaveMesh(PirateModels.TorchBarrel());
             AddMesh(table, "Torch Barrel", barrel, material, new Vector3(0.0f, 0.0f, -0.85f), Vector3.zero);
 
@@ -192,7 +194,22 @@ namespace Watermelon.World2
             }
 
             for (int i = closed.childCount - 1; i >= 0; i--) Object.DestroyImmediate(closed.GetChild(i).gameObject);
-            AddMesh(closed, "Cursed Thorns", PirateArtAssets.SaveMesh(PirateModels.CursedThorns(seed)), material, new Vector3(0, -0.05f, 0), Vector3.zero);
+            GameObject thorns = AddMesh(closed, "Cursed Thorns", PirateArtAssets.SaveMesh(PirateModels.CursedThorns(seed)), material, new Vector3(0, -0.05f, 0), Vector3.zero);
+
+            // the unlock animation shrinks the thorns away (it referenced the template's plant obstacles)
+            foreach (ScaleAnimationForUnlockable animation in instance.GetComponentsInChildren<ScaleAnimationForUnlockable>(true))
+            {
+                SerializedObject serialized = new SerializedObject(animation);
+                SerializedProperty hide = serialized.FindProperty("objectsToHide");
+                hide.arraySize = 1;
+                hide.GetArrayElementAtIndex(0).objectReferenceValue = thorns.transform;
+                SerializedProperty appear = serialized.FindProperty("objectsToAppear");
+                for (int i = appear.arraySize - 1; i >= 0; i--)
+                {
+                    if (appear.GetArrayElementAtIndex(i).objectReferenceValue == null) appear.DeleteArrayElementAtIndex(i);
+                }
+                serialized.ApplyModifiedPropertiesWithoutUndo();
+            }
 
             Save(instance, path);
         }

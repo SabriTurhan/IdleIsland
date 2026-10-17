@@ -62,6 +62,16 @@ namespace Watermelon
             {
                 CheckCollect(collectMission.CurrencyType, problems);
             }
+            else if (mission is KillEnemiesMission killMission)
+            {
+                CheckEnemies(killMission, problems);
+            }
+            else if (mission is SubworldEnterMission)
+            {
+                SubworldEntrance entrance = GetField<SubworldEntrance>(mission, "subworldEntranceRef");
+                if (entrance == null || !entrance.gameObject.activeInHierarchy)
+                    problems.Add("sub-world entrance is missing or hidden");
+            }
 
             return (problems.Count == 0 ? "OK " : "PROBLEM ") + header + string.Join("; ", problems);
         }
@@ -103,6 +113,21 @@ namespace Watermelon
                 {
                     int amount = GetField<int>(collectMission, "amount");
                     CurrencyController.Add(collectMission.CurrencyType, amount);
+                }
+                else if (mission is KillEnemiesMission killMission)
+                {
+                    object save = GetField<object>(killMission, "save");
+                    save.GetType().GetField("Killed").SetValue(save, killMission.Amount);
+                    killMission.GetType().GetMethod("CheckStage", PRIVATE_FIELD).Invoke(killMission, null);
+                }
+                else if (mission is OwnCurrencyMission ownMission)
+                {
+                    int missing = ownMission.Amount - CurrencyController.GetCurrency(ownMission.CurrencyType).Amount;
+                    if (missing > 0) CurrencyController.Add(ownMission.CurrencyType, missing);
+                }
+                else if (mission is SubworldEnterMission)
+                {
+                    mission.GetType().GetMethod("OnSubworldEnterTriggered", PRIVATE_FIELD).Invoke(mission, null);
                 }
                 else
                 {
@@ -244,6 +269,26 @@ namespace Watermelon
                 if (!upgradesBuildingOpen)
                     problems.Add("upgrades building is not available");
             }
+        }
+
+        // there must be a place where this enemy appears (spawn point in an open area or the boss arena)
+        private static void CheckEnemies(KillEnemiesMission mission, List<string> problems)
+        {
+            if (mission.EnemyType == EnemyType.GhostCaptain && !mission.AnyEnemyType)
+            {
+                if (Object.FindFirstObjectByType<BossArena>(FindObjectsInactive.Include) == null)
+                    problems.Add("no boss arena");
+                return;
+            }
+
+            foreach (EnemySpawnPoint point in Object.FindObjectsByType<EnemySpawnPoint>(FindObjectsSortMode.None))
+            {
+                if (!point.gameObject.activeInHierarchy) continue;
+                EnemyType type = GetField<EnemyType>(point, "enemyType");
+                if (mission.AnyEnemyType || type == mission.EnemyType) return;
+            }
+
+            problems.Add("no active spawn point for " + (mission.AnyEnemyType ? "any enemy" : mission.EnemyType.ToString()));
         }
 
         // checks that the player has a way to get this currency right now

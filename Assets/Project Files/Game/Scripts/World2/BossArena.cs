@@ -23,6 +23,21 @@ namespace Watermelon
 
         private GhostCaptainBehavior boss;
         private BossHealthBar healthBar;
+        private SubworldBehavior subworld;
+
+        private void Awake()
+        {
+            subworld = GetComponentInParent<SubworldBehavior>();
+        }
+
+        private bool IsPlayerInArena()
+        {
+            PlayerBehavior player = PlayerBehavior.GetBehavior();
+            if (player == null || player.IsDead) return false;
+            if (subworld == null) return true;
+
+            return WorldController.WorldBehavior != null && WorldController.WorldBehavior.SubworldHandler.ActiveSubworld == subworld;
+        }
 
         private void Update()
         {
@@ -31,9 +46,19 @@ namespace Watermelon
 
             if (boss == null)
             {
-                if (Vector3.Distance(PlayerBehavior.Position, bossSpawnPoint.position) < triggerRadius)
+                if (IsPlayerInArena() && Vector3.Distance(PlayerBehavior.Position, bossSpawnPoint.position) < triggerRadius)
                     SpawnBoss();
 
+                return;
+            }
+
+            // the player died or left: the captain waits for the next attempt at full health
+            if (!boss.IsDead && !IsPlayerInArena())
+            {
+                boss.OnBossDefeated -= HandleBossDefeated;
+                boss.Despawn();
+                boss = null;
+                if (healthBar != null) healthBar.Hide();
                 return;
             }
 
