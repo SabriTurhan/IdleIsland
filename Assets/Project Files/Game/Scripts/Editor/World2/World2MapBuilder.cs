@@ -36,7 +36,7 @@ namespace Watermelon.World2
             ".......2..........ssss.......",
             "......sll1s.......sllls......",
             ".....slllllls....sl5ll8s.....",
-            ".....sllllllllBBsllllll......",
+            ".....sllllllllBBlllllll......",
             "......slllllls....l7lll6.....",
             ".......ssssss.....sllls......",
             "...................sss.......",
@@ -293,7 +293,9 @@ namespace Watermelon.World2
             }
 
             // bridge from the beach to the graveyard island (the bridge extends along its local +Z)
-            PlaceBuilding(context, "Bridge", PREFABS + "Buildings/Bridge Building.prefab", 15, 13, 90, 40, (CurrencyType.Wood, 60), (CurrencyType.IronBar, 4));
+            BuildingComplexBehavior bridge = PlaceBuilding(context, "Bridge", PREFABS + "Buildings/Bridge Building.prefab", 15, 13, 90, 40, (CurrencyType.Wood, 60), (CurrencyType.IronBar, 4));
+            // the template bridge is a little short for a 2 cell gap: shift it so both ends rest on the tiles
+            bridge.transform.position += new Vector3(0.5f, 0, 0);
 
             // D: graveyard
             PlaceBuilding(context, "Ropes Table", PREFABS + "Buildings/Ropes Craft Table.prefab", 13, 20, 0, 0, (CurrencyType.Wood, 40), (CurrencyType.Fiber, 20));
@@ -420,10 +422,21 @@ namespace Watermelon.World2
                 if (old != null) Object.DestroyImmediate(old.gameObject);
 
                 Transform spawnPoint = subworld.transform.Find("Spawn Point");
-                Transform exit = subworld.GetComponentInChildren<SubworldExit>(true).transform;
-                // the arena center: a bit past the spawn point, away from the exit
-                Vector3 direction = (spawnPoint.position - exit.position).SetY(0).normalized;
-                Vector3 center = spawnPoint.position + direction * 7f;
+
+                // the arena is the largest platform of the cave (the deepest one, reached over the ramp)
+                Bounds platform = new Bounds(spawnPoint.position, Vector3.zero);
+                float bestArea = 0f;
+                foreach (MeshRenderer renderer in subworld.GetComponentsInChildren<MeshRenderer>(true))
+                {
+                    if (!renderer.name.StartsWith("Cave_platform")) continue;
+                    float area = renderer.bounds.size.x * renderer.bounds.size.z;
+                    if (area > bestArea) { bestArea = area; platform = renderer.bounds; }
+                }
+
+                Vector3 center = new Vector3(platform.center.x, spawnPoint.position.y, platform.center.z);
+                // the player comes from the spawn side, the captain's hoard lies behind him
+                Vector3 direction = (center - spawnPoint.position).SetY(0).normalized;
+                float edge = Mathf.Min(platform.extents.x, platform.extents.z);
 
                 GameObject arena = new GameObject("Captain Arena");
                 arena.transform.SetParent(subworld.transform, false);
@@ -437,18 +450,19 @@ namespace Watermelon.World2
                 BossArena bossArena = arena.AddComponent<BossArena>();
                 SerializedObject serialized = new SerializedObject(bossArena);
                 serialized.FindProperty("bossSpawnPoint").objectReferenceValue = bossSpawn;
-                serialized.FindProperty("triggerRadius").floatValue = 8f;
+                serialized.FindProperty("triggerRadius").floatValue = edge + 1f;
                 serialized.FindProperty("titleFont").objectReferenceValue = AssetDatabase.LoadAssetAtPath<TMPro.TMP_FontAsset>("Assets/Project Files/Game/Fonts/FredokaOne/FredokaOne 50/FredokaOne 50 Outline.asset");
                 serialized.FindProperty("barSprite").objectReferenceValue = AssetDatabase.LoadAssetAtPath<Sprite>("Assets/Project Files/Game/Images/Base/UI Flat/pb_rect_rounded.png");
                 serialized.ApplyModifiedPropertiesWithoutUndo();
 
-                // the captain's hoard and flags behind him
+                // the captain's hoard and flags behind him, kept inside the platform
                 Vector3 side = Vector3.Cross(Vector3.up, direction);
-                AddProp(context, "Treasure Pile", arena.transform, center + direction * 3.2f, 0f, 1.3f);
-                AddProp(context, "Skull Flag", arena.transform, center + direction * 3.5f + side * 2.6f, 200f);
-                AddProp(context, "Skull Flag", arena.transform, center + direction * 3.5f - side * 2.6f, 160f);
-                AddProp(context, "Cannon", arena.transform, center + direction * 2.2f + side * 3.6f, Quaternion.LookRotation(-direction).eulerAngles.y + 25f);
-                AddProp(context, "Barrel", arena.transform, center + direction * 2.5f - side * 3.8f, 0f);
+                float back = edge * 0.62f;
+                AddProp(context, "Treasure Pile", arena.transform, center + direction * back, 0f, 1.2f);
+                AddProp(context, "Skull Flag", arena.transform, center + direction * back * 0.85f + side * edge * 0.5f, 200f);
+                AddProp(context, "Skull Flag", arena.transform, center + direction * back * 0.85f - side * edge * 0.5f, 160f);
+                AddProp(context, "Cannon", arena.transform, center + direction * back * 0.3f + side * edge * 0.62f, Quaternion.LookRotation(-direction).eulerAngles.y + 25f);
+                AddProp(context, "Barrel", arena.transform, center + direction * back * 0.3f - side * edge * 0.62f, 0f);
             }
         }
 
@@ -473,38 +487,123 @@ namespace Watermelon.World2
             return Region.Woods;
         }
 
+        // footprints already taken on the ground (x, z, radius)
+        private class Footprints
+        {
+            private readonly List<Vector3> circles = new List<Vector3>();
+            private readonly List<Bounds> boxes = new List<Bounds>();
+
+            public void AddCircle(Vector3 position, float radius) => circles.Add(new Vector3(position.x, radius, position.z));
+
+            public void AddBox(Bounds bounds, float margin)
+            {
+                bounds.Expand(new Vector3(margin * 2f, 0, margin * 2f));
+                boxes.Add(bounds);
+            }
+
+            public bool IsFree(Vector3 position, float radius)
+            {
+                foreach (Vector3 circle in circles)
+                {
+                    float dx = circle.x - position.x, dz = circle.z - position.z;
+                    float need = circle.y + radius;
+                    if (dx * dx + dz * dz < need * need) return false;
+                }
+
+                foreach (Bounds box in boxes)
+                {
+                    float dx = Mathf.Max(box.min.x - position.x, 0, position.x - box.max.x);
+                    float dz = Mathf.Max(box.min.z - position.z, 0, position.z - box.max.z);
+                    if (dx * dx + dz * dz < radius * radius) return false;
+                }
+
+                return true;
+            }
+        }
+
+        private static Bounds VisualBounds(GameObject root)
+        {
+            Bounds bounds = new Bounds(root.transform.position, Vector3.zero);
+            bool first = true;
+            foreach (Renderer renderer in root.GetComponentsInChildren<Renderer>(true))
+            {
+                if (renderer is ParticleSystemRenderer || renderer.GetComponentInParent<Canvas>(true) != null) continue;
+                if (first) { bounds = renderer.bounds; first = false; }
+                else bounds.Encapsulate(renderer.bounds);
+            }
+
+            return bounds;
+        }
+
+        // ground radius of every resource / prop so nothing overlaps
+        private static float FootprintRadius(string item)
+        {
+            if (item.Contains("Coconut")) return 1.25f;
+            if (item.Contains("Tree Resource")) return 1.15f;
+            if (item.Contains("Stone") || item.Contains("Iron")) return 1.0f;
+            if (item.Contains("Berry")) return 0.95f;
+            if (item.Contains("Pumpkin")) return 0.7f;
+            if (item.Contains("Grass")) return 0.75f;
+            if (item.Contains("Dead Tree")) return 0.8f;
+            if (item.Contains("Tombstone")) return 0.6f;
+            return 0.8f;
+        }
+
+        private static GameObject AddFixedProp(Context context, Footprints footprints, string name, Transform parent, Vector3 position, float rotationY, float scale = 1f)
+        {
+            GameObject prop = AddProp(context, name, parent, position, rotationY, scale);
+            if (prop != null)
+            {
+                Bounds bounds = VisualBounds(prop);
+                footprints.AddCircle(position, Mathf.Max(0.5f, Mathf.Min(bounds.extents.x, bounds.extents.z) + 0.3f));
+            }
+
+            return prop;
+        }
+
         private static void BuildResourcesAndProps(Context context)
         {
             Transform decor = new GameObject("Decor").transform;
             decor.SetParent(context.World.Find("Environment"), false);
 
-            Vector2Int start = new Vector2Int(15, 8);
+            Footprints footprints = new Footprints();
 
+            // digging points on the graveyard
+            int dig = 0;
+            Vector2Int[] digCells = { new Vector2Int(13, 19), new Vector2Int(15, 20), new Vector2Int(16, 21), new Vector2Int(14, 20) };
+            foreach (DiggingSpawnPoint point in context.Special.GetComponentsInChildren<DiggingSpawnPoint>(true))
+            {
+                if (dig >= digCells.Length) break;
+                point.transform.position = CellPosition(digCells[dig].x, digCells[dig].y) + new Vector3(-1.3f, 0, -1.1f);
+                dig++;
+            }
+
+            // buildings (incl. their construction zone and purchase area) with a walking margin around them
+            foreach (Transform building in context.Buildings)
+                footprints.AddBox(VisualBounds(building.gameObject), building.name == "Bridge" || building.name == "Ramp" ? 1.4f : 1.0f);
+
+            // enemies, helpers, digging points and sub-world entrances
+            foreach (Transform character in context.Characters)
+                footprints.AddCircle(character.position, character.GetComponent<HelperBehavior>() != null ? 1.2f : 1.4f);
+            foreach (Transform special in context.Special)
+                footprints.AddCircle(special.position, special.GetComponent<SubworldEntrance>() != null ? 2.5f : 1.0f);
+
+            // cells kept clear: start area, ramp and bridge ends, the cells in front of every gate
+            HashSet<Vector2Int> clear = new HashSet<Vector2Int>();
+            for (int r = 14; r <= 16; r++)
+                for (int c = 7; c <= 9; c++) clear.Add(new Vector2Int(r, c));
+            clear.Add(new Vector2Int(8, 12));
+            clear.Add(new Vector2Int(8, 14));
+            clear.Add(new Vector2Int(15, 12));
+            clear.Add(new Vector2Int(15, 16));
             for (int row = 0; row < MAP.Length; row++)
             {
                 for (int column = 0; column < MAP[row].Length; column++)
                 {
                     char cell = MAP[row][column];
-                    if (cell != 'l' && cell != 's' && cell != 't') continue;
-
-                    Vector2Int key = new Vector2Int(row, column);
-                    if (context.Reserved.Contains(key) || (Mathf.Abs(row - start.x) <= 1 && Mathf.Abs(column - start.y) <= 1 && !(row == 16 && column == 9))) continue;
-
-                    Region region = RegionOf(row, column);
-                    Vector3 center = CellPosition(row, column, CellHeight(cell));
-
-                    foreach ((string item, float chance) in Spawnables(region, cell, column))
-                    {
-                        if (context.Random.NextDouble() > chance) continue;
-
-                        Vector3 offset = new Vector3((float)context.Random.NextDouble() * 3f - 1.5f, 0, (float)context.Random.NextDouble() * 3f - 1.5f);
-                        float rotation = (float)context.Random.NextDouble() * 360f;
-
-                        if (item.StartsWith("prop:"))
-                            AddProp(context, item.Substring(5), decor, center + offset, rotation, 0.9f + (float)context.Random.NextDouble() * 0.25f);
-                        else
-                            Spawn(item, context.Resources, center + offset, rotation);
-                    }
+                    if (!GATE_TORCHES.ContainsKey(cell) || cell == 'x' || cell == 'y') continue;
+                    foreach (Vector2Int step in new[] { Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right })
+                        clear.Add(new Vector2Int(row + step.x, column + step.y));
                 }
             }
 
@@ -520,40 +619,74 @@ namespace Watermelon.World2
                 raft.AddComponent<UnityEngine.AI.NavMeshObstacle>().carving = true;
                 foreach (Renderer renderer in raft.GetComponentsInChildren<Renderer>(true))
                     renderer.sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Project Files/Game/Materials/Buildings.mat");
+                footprints.AddCircle(wreck, 1.8f);
             }
-            AddProp(context, "Barrel", decor, wreck + new Vector3(2.0f, 0, 0.6f), 30f);
-            AddProp(context, "Crate", decor, wreck + new Vector3(-1.9f, 0, 0.4f), 15f);
-            AddProp(context, "Crate", decor, CellPosition(17, 10, -0.5f) + new Vector3(0.4f, 0, 0.6f), 70f, 0.8f);
+            AddFixedProp(context, footprints, "Barrel", decor, wreck + new Vector3(2.2f, 0, 0.8f), 30f);
+            AddFixedProp(context, footprints, "Crate", decor, wreck + new Vector3(-2.1f, 0, 0.5f), 15f);
+            AddFixedProp(context, footprints, "Crate", decor, CellPosition(17, 10, -0.5f) + new Vector3(0.4f, 0, 0.6f), 70f, 0.8f);
 
             // landmarks
-            AddProp(context, "Skull Flag", decor, CellPosition(7, 10) + new Vector3(1.5f, 0, -1f), 220f);
-            AddProp(context, "Lantern Post", decor, CellPosition(8, 12) + new Vector3(0, 0, 1.8f), 180f);
-            AddProp(context, "Lantern Post", decor, CellPosition(15, 12) + new Vector3(-1.5f, 0, -1.8f), 90f);
-            AddProp(context, "Cannon", decor, CellPosition(7, 14, 4f) + new Vector3(-1.2f, 0, 1.2f), 300f);
-            AddProp(context, "Cannon", decor, CellPosition(9, 18, 4f) + new Vector3(1.4f, 0, 0f), 90f);
-            AddProp(context, "Skull Flag", decor, CellPosition(6, 15, 4f) + new Vector3(0, 0, 1.5f), 180f);
-            AddProp(context, "Barrel", decor, CellPosition(3, 6) + new Vector3(1.5f, 0, -1.4f), 0f);
-            AddProp(context, "Crate", decor, CellPosition(3, 7) + new Vector3(0.8f, 0, -1.6f), 20f);
-            AddProp(context, "Lantern Post", decor, CellPosition(2, 4) + new Vector3(-1.5f, 0, 1.6f), 90f);
+            AddFixedProp(context, footprints, "Skull Flag", decor, CellPosition(7, 10) + new Vector3(1.5f, 0, -1f), 220f);
+            AddFixedProp(context, footprints, "Lantern Post", decor, CellPosition(8, 12) + new Vector3(0, 0, 2.0f), 180f);
+            AddFixedProp(context, footprints, "Lantern Post", decor, CellPosition(15, 12) + new Vector3(-1.5f, 0, -2.0f), 90f);
+            AddFixedProp(context, footprints, "Cannon", decor, CellPosition(7, 14, 4f) + new Vector3(-1.2f, 0, 1.2f), 300f);
+            AddFixedProp(context, footprints, "Cannon", decor, CellPosition(9, 18, 4f) + new Vector3(1.4f, 0, 0f), 90f);
+            AddFixedProp(context, footprints, "Skull Flag", decor, CellPosition(6, 15, 4f) + new Vector3(0, 0, 1.5f), 180f);
+            AddFixedProp(context, footprints, "Barrel", decor, CellPosition(3, 6) + new Vector3(1.5f, 0, -1.4f), 0f);
+            AddFixedProp(context, footprints, "Crate", decor, CellPosition(3, 7) + new Vector3(0.8f, 0, -1.6f), 20f);
+            AddFixedProp(context, footprints, "Lantern Post", decor, CellPosition(2, 4) + new Vector3(-1.5f, 0, 1.6f), 90f);
 
             // gate pockets: decor shown when the gate opens (children of the tile's opened visuals)
             AddPocketDecor(context, '5', "Tombstone", 3);
             AddPocketDecor(context, '6', "Treasure Pile", 1);
             AddPocketDecor(context, '6', "Skull Flag", 1);
 
+            // resources and scattered decor: up to 4 slots per cell (2x2), one object per slot, no overlaps
+            Vector2[] slots = { new Vector2(-1.25f, -1.25f), new Vector2(1.25f, -1.25f), new Vector2(-1.25f, 1.25f), new Vector2(1.25f, 1.25f) };
+            for (int row = 0; row < MAP.Length; row++)
+            {
+                for (int column = 0; column < MAP[row].Length; column++)
+                {
+                    char cell = MAP[row][column];
+                    if (cell != 'l' && cell != 's' && cell != 't') continue;
+
+                    Vector2Int key = new Vector2Int(row, column);
+                    if (context.Reserved.Contains(key) || clear.Contains(key)) continue;
+
+                    Region region = RegionOf(row, column);
+                    Vector3 center = CellPosition(row, column, CellHeight(cell));
+
+                    List<int> freeSlots = new List<int> { 0, 1, 2, 3 };
+                    foreach ((string item, float chance) in Spawnables(region, cell, column))
+                    {
+                        if (context.Random.NextDouble() > chance || freeSlots.Count == 0) continue;
+
+                        float radius = FootprintRadius(item);
+                        for (int attempt = 0; attempt < freeSlots.Count; attempt++)
+                        {
+                            int slotIndex = context.Random.Next(freeSlots.Count);
+                            Vector2 slot = slots[freeSlots[slotIndex]];
+                            Vector3 position = center + new Vector3(slot.x + ((float)context.Random.NextDouble() - 0.5f) * 0.5f, 0, slot.y + ((float)context.Random.NextDouble() - 0.5f) * 0.5f);
+                            if (!footprints.IsFree(position, radius)) continue;
+
+                            float rotation = (float)context.Random.NextDouble() * 360f;
+                            if (item.StartsWith("prop:"))
+                                AddProp(context, item.Substring(5), decor, position, rotation, 0.9f + (float)context.Random.NextDouble() * 0.2f);
+                            else
+                                Spawn(item, context.Resources, position, rotation);
+
+                            footprints.AddCircle(position, radius);
+                            freeSlots.RemoveAt(slotIndex);
+                            break;
+                        }
+                    }
+                }
+            }
+
             // fishing spots along the shores
             foreach (Vector2Int water in new[] { new Vector2Int(18, 10), new Vector2Int(17, 5), new Vector2Int(0, 4), new Vector2Int(18, 22), new Vector2Int(12, 3) })
                 Spawn(PREFABS + "Drop/Fish Resource Source.prefab", context.Resources, CellPosition(water.x, water.y, 0f), 0f);
 
-            // digging points on the graveyard
-            int dig = 0;
-            Vector2Int[] digCells = { new Vector2Int(13, 19), new Vector2Int(15, 20), new Vector2Int(16, 21), new Vector2Int(14, 20) };
-            foreach (DiggingSpawnPoint point in context.Special.GetComponentsInChildren<DiggingSpawnPoint>(true))
-            {
-                if (dig >= digCells.Length) break;
-                point.transform.position = CellPosition(digCells[dig].x, digCells[dig].y) + new Vector3(-1.3f, 0, -1.1f);
-                dig++;
-            }
         }
 
         private static IEnumerable<(string, float)> Spawnables(Region region, char cell, int column)
