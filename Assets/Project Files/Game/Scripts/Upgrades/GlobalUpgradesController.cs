@@ -76,17 +76,30 @@ namespace Watermelon
         {
             uiUpgrades.ResetUpgrades();
             uiUpgrades.RegisterUpgrades(ActiveUpgrades.ConvertAll(upgrade => (IUpgrade)upgrade));
-            uiUpgrades.RegisterUpgrades(globalSimpleUpgrades);
+            uiUpgrades.RegisterUpgrades(globalSimpleUpgrades.FindAll(upgrade => !IsLocked(upgrade)));
 
             UIController.ShowPage<UIUpgrades>();
         }
 
         public static void OpenUpgradesPage(List<IUpgrade> upgradesToOpen)
         {
+            List<IUpgrade> availableUpgrades = upgradesToOpen.FindAll(upgrade => !IsLocked(upgrade));
+
+            // nothing to show (every upgrade is locked by missions) - don't open an empty page
+            if (availableUpgrades.Count == 0)
+                return;
+
             uiUpgrades.ResetUpgrades();
-            uiUpgrades.RegisterUpgrades(upgradesToOpen);
+            uiUpgrades.RegisterUpgrades(availableUpgrades);
 
             UIController.ShowPage<UIUpgrades>();
+        }
+
+        private static bool IsLocked(IUpgrade upgrade)
+        {
+            AbstractLocalUpgrade localUpgrade = upgrade as AbstractLocalUpgrade;
+
+            return localUpgrade != null && localUpgrade.IsLocked;
         }
     }
 }

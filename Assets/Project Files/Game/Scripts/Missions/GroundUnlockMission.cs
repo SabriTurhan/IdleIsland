@@ -31,6 +31,21 @@ namespace Watermelon
 
             isDirty = true;
 
+            // the target may not be initialised yet (e.g. it was just enabled by the previous mission),
+            // until then "can't be purchased or constructed" would wrongly look like "already built"
+            groundTile.InvokeOrSubscribe(OnTargetInitialised);
+
+            groundTile.SubscribeOnFullyUnlocked(OnUnlocked);
+            groundTile.SubscribeOnResourcePlaced(OnResourcePlaced);
+        }
+
+        private void OnTargetInitialised()
+        {
+            if (MissionsController.ActiveMission != this || missionStage == Stage.Finished || missionStage == Stage.Collected)
+                return;
+
+            isDirty = true;
+
             if (groundTile.CanBePurchased || groundTile.CanBeConstructed)
             {
                 StartMission();
@@ -39,9 +54,6 @@ namespace Watermelon
             {
                 FinishMission();
             }
-
-            groundTile.SubscribeOnFullyUnlocked(OnUnlocked);
-            groundTile.SubscribeOnResourcePlaced(OnResourcePlaced);
         }
 
         private void OnUnlocked()

@@ -35,6 +35,10 @@ namespace Watermelon
             CheckStage();
 
             CurrencyController.SubscribeGlobalCallback(OnCurrencyPicked);
+
+            PlayerInventory inventory = GetPlayerInventory();
+            if (inventory != null)
+                inventory.CapacityChanged += OnInventoryCapacityChanged;
         }
 
         public override void Deactivate()
@@ -42,6 +46,35 @@ namespace Watermelon
             base.Deactivate();
 
             CurrencyController.UnsubscribeGlobalCallback(OnCurrencyPicked);
+
+            PlayerInventory inventory = GetPlayerInventory();
+            if (inventory != null)
+                inventory.CapacityChanged -= OnInventoryCapacityChanged;
+        }
+
+        private void OnInventoryCapacityChanged()
+        {
+            // progress text shows a "bag is full" hint
+            isDirty = true;
+        }
+
+        private static PlayerInventory GetPlayerInventory()
+        {
+            PlayerBehavior player = PlayerBehavior.GetBehavior();
+
+            return player != null ? player.Inventory : null;
+        }
+
+        // the required resource goes to the bag and the bag is full - it can't be picked up until space is freed
+        private bool IsBlockedByFullInventory()
+        {
+            Currency currency = CurrencyController.GetCurrency(currencyType);
+            if (currency == null || !currency.Data.UseInventory)
+                return false;
+
+            PlayerInventory inventory = GetPlayerInventory();
+
+            return inventory != null && inventory.IsFull();
         }
 
         private void OnCurrencyPicked(Currency currency, int amountDifference)
@@ -72,7 +105,12 @@ namespace Watermelon
 
         public override string GetFormattedProgress()
         {
-            return string.Format("{0}/{1} <sprite name={2}>", save.CollectedItems, amount, currencyType);
+            string progress = string.Format("{0}/{1} <sprite name={2}>", save.CollectedItems, amount, currencyType);
+
+            if (missionStage == Stage.Active && IsBlockedByFullInventory())
+                progress += " <color=#FF5A5A>BAG FULL!</color>";
+
+            return progress;
         }
 
         public override float GetProgress()

@@ -58,7 +58,7 @@ namespace Watermelon
 
             isDirty = true;
 
-            if (upgrade.UpgradeLevel >= upgradeLevel)
+            if (CurrentUpgradeLevel >= upgradeLevel)
             {
                 FinishMission();
             }
@@ -98,7 +98,7 @@ namespace Watermelon
 
         private void OnLocalUpgradeMade()
         {
-            if (localUpgrade.UpgradeLevel >= upgradeLevel)
+            if (CurrentUpgradeLevel >= upgradeLevel)
             {
                 FinishMission();
             }
@@ -130,7 +130,20 @@ namespace Watermelon
 
         public override float GetProgress()
         {
-            return upgrade.UpgradeLevel >= upgradeLevel ? 1.0f : 0.0f;
+            return CurrentUpgradeLevel >= upgradeLevel ? 1.0f : 0.0f;
+        }
+
+        // local upgrades get their save only when the building opens, before that the level is 0
+        private int CurrentUpgradeLevel
+        {
+            get
+            {
+                AbstractLocalUpgrade local = upgrade as AbstractLocalUpgrade;
+                if (local != null && !local.IsInitialised)
+                    return 0;
+
+                return upgrade.UpgradeLevel;
+            }
         }
 
         public override Vector3 GetDefaultPreviewPosition()

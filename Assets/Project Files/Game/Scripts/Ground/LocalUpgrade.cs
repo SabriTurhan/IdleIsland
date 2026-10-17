@@ -42,7 +42,7 @@ namespace Watermelon
         [Button("Upgrade")]
         public override void UpgradeStage()
         {
-            if (!IsMaxedOut)
+            if (!IsMaxedOut && !IsLocked)
             {
                 UpgradeIndex += 1;
             }

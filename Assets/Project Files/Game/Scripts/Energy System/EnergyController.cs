@@ -70,6 +70,7 @@ namespace Watermelon
 
             ResourceSourceBehavior.OnFirstTimeHit += OnFirstResourceHit;
             PlayerBehavior.OnResourceWillBeReceived += OnResorceWillBeReceivedReceived;
+            MissionsController.OnNextMissionStarted += OnMissionStarted;
 
             Tween.DelayedCall(0.1f, DisableFoodItemsCurrencyUI);
         }
@@ -105,6 +106,7 @@ namespace Watermelon
 
             ResourceSourceBehavior.OnFirstTimeHit -= OnFirstResourceHit;
             PlayerBehavior.OnResourceWillBeReceived -= OnResorceWillBeReceivedReceived;
+            MissionsController.OnNextMissionStarted -= OnMissionStarted;
         }
 
         public static void Unload()
@@ -117,6 +119,13 @@ namespace Watermelon
 
             ResourceSourceBehavior.OnFirstTimeHit -= instance.OnFirstResourceHit;
             PlayerBehavior.OnResourceWillBeReceived -= instance.OnResorceWillBeReceivedReceived;
+            MissionsController.OnNextMissionStarted -= OnMissionStarted;
+        }
+
+        private static void OnMissionStarted()
+        {
+            if (PlayerBehavior.GetBehavior() != null)
+                UpdatePlayerFoodReceiveAbility();
         }
 
         private void OnFoodCurrencyChanged(Currency currency, int difference)
@@ -165,6 +174,12 @@ namespace Watermelon
             if (EnergyPoints + notAccountedEnergyPoints >= Data.MaxEnergyPoints * FULL_ENERGY_THRESHOLD)
             {
                 PlayerBehavior.GetBehavior().RemoveAcceptableResoruces(foodResourceTypes);
+
+                // food required by the active mission is always picked up, otherwise the mission would wait until energy drops
+                if (MissionsController.TryGetActiveCollectCurrency(out CurrencyType missionCurrency) && foodResourceTypes.Contains(missionCurrency))
+                {
+                    PlayerBehavior.GetBehavior().AddAcceptableResoruces(new List<CurrencyType>() { missionCurrency });
+                }
             }
             else
             {

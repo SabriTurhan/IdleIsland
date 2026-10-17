@@ -10,7 +10,14 @@ namespace Watermelon
         [SerializeField] BuildingComplexBehavior buildingComplex;
         public BuildingComplexBehavior BuildingComplex => buildingComplex;
 
-        public IUnlockableComplex LinkedBuilding => buildingComplex;
+        // while the building is hidden under a locked tile the mission asks to open that tile first
+        public IUnlockableComplex LinkedBuilding => IsBlockedByTile ? blockingTile : buildingComplex;
+
+        public override string DisplayTitle => IsBlockedByTile ? "Clear the land" : base.DisplayTitle;
+
+        private GroundTileComplexBehavior blockingTile;
+        private bool IsBlockedByTile => blockingTile != null && !blockingTile.IsOpen;
+
         private Save save;
 
         public override void Initialise()
@@ -30,17 +37,62 @@ namespace Watermelon
 
             isDirty = true;
 
-            if (buildingComplex.CanBePurchased || buildingComplex.CanBeConstructed)
+            // the building is placed on a locked tile that no mission opens - guide the player to that tile first
+            blockingTile = FindBlockingTile();
+            if (IsBlockedByTile)
             {
                 StartMission();
+
+                blockingTile.SubscribeOnResourcePlaced(OnResourcePlaced);
+            }
+
+            // the target may not be initialised yet (e.g. it was just enabled by the previous mission),
+            // until then "can't be purchased or constructed" would wrongly look like "already built"
+            buildingComplex.InvokeOrSubscribe(OnTargetInitialised);
+
+            buildingComplex.SubscribeOnFullyUnlocked(OnUnlocked);
+            buildingComplex.SubscribeOnResourcePlaced(OnResourcePlaced);
+        }
+
+        private void OnTargetInitialised()
+        {
+            if (MissionsController.ActiveMission != this || missionStage == Stage.Finished || missionStage == Stage.Collected)
+                return;
+
+            isDirty = true;
+
+            bool wasBlocked = blockingTile != null;
+            if (wasBlocked)
+            {
+                blockingTile.UnsubscribeOnResourcePlaced(OnResourcePlaced);
+                blockingTile = null;
+            }
+
+            if (buildingComplex.CanBePurchased || buildingComplex.CanBeConstructed)
+            {
+                if (missionStage != Stage.Active)
+                {
+                    StartMission();
+                }
+                else if (wasBlocked)
+                {
+                    // switch the missions panel from the tile to the building
+                    MissionsController.RefreshActiveMissionUI();
+                }
             }
             else
             {
                 FinishMission();
             }
+        }
 
-            buildingComplex.SubscribeOnFullyUnlocked(OnUnlocked);
-            buildingComplex.SubscribeOnResourcePlaced(OnResourcePlaced);
+        private GroundTileComplexBehavior FindBlockingTile()
+        {
+            GroundTileBehavior tile = GroundTileBehavior.GetTile(buildingComplex);
+            if (tile == null || tile.IsOpen)
+                return null;
+
+            return tile.GetComponentInParent<GroundTileComplexBehavior>();
         }
 
         private void OnUnlocked()
@@ -57,6 +109,9 @@ namespace Watermelon
 
             buildingComplex.UnsubscribeOnFullyUnlocked(OnUnlocked);
             buildingComplex.UnsubscribeOnResourcePlaced(OnResourcePlaced);
+
+            if (blockingTile != null)
+                blockingTile.UnsubscribeOnResourcePlaced(OnResourcePlaced);
         }
 
         private void OnResourcePlaced()
@@ -71,12 +126,12 @@ namespace Watermelon
 
         public override float GetProgress()
         {
-            return buildingComplex.CanBePurchased ? 0.0f : 1.0f;
+            return IsBlockedByTile || buildingComplex.CanBePurchased ? 0.0f : 1.0f;
         }
 
         public override Vector3 GetDefaultPreviewPosition()
         {
-            return buildingComplex.transform.position;
+            return IsBlockedByTile ? blockingTile.Position : buildingComplex.transform.position;
         }
 
         [System.Serializable]

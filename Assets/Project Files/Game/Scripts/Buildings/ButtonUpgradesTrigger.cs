@@ -73,6 +73,9 @@ namespace Watermelon
 
         public void PlayerEnteredZone()
         {
+            if (!HasAvailableUpgrades)
+                return;
+
             canvasRef.enabled = Control.InputType != InputType.Gamepad;
             IsDistanceToggleInCloseMode = true;
 

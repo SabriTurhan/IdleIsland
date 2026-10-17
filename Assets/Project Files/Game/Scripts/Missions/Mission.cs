@@ -17,6 +17,9 @@ namespace Watermelon
         protected string title;
         public string Title => title;
 
+        // title shown in the missions panel, can change while the mission is running
+        public virtual string DisplayTitle => title;
+
         [BoxGroup("Reward", "Reward")]
         [SerializeField] protected MissionRewardType rewardType;
         public MissionRewardType RewardType => rewardType;

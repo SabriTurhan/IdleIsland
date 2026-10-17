@@ -160,7 +160,7 @@ namespace Watermelon
                 // Enable panel
                 ActivateUIPanel(mission.MissionUIType, mission);
 
-                activeUICase.SetTitle(string.Format(activeMission.Title));
+                activeUICase.SetTitle(string.Format(activeMission.DisplayTitle));
                 activeUICase.UpdateUI();
             }
         }
@@ -352,7 +352,7 @@ namespace Watermelon
         {
             this.mission = mission;
 
-            uiPanel.SetTitle(mission.Title);
+            uiPanel.SetTitle(mission.DisplayTitle);
         }
 
         public override void UpdateUI()
@@ -390,6 +390,9 @@ namespace Watermelon
         private Pool resourcePool;
 
         private MissionBuildRequiredResource[] resourcesUI;
+
+        // the target can change while the mission runs (tile first, then the building on it)
+        private IUnlockableComplex linkedComplex;
         private IUnlockingMission unlockingMission;
 
         public override void Initialise(MissionUIPanel uiPanel)
@@ -409,17 +412,29 @@ namespace Watermelon
             this.mission = mission;
 
             unlockingMission = (IUnlockingMission)mission;
+            linkedComplex = unlockingMission.LinkedBuilding;
 
-            uiPanel.SetTitle(mission.Title);
+            uiPanel.SetTitle(mission.DisplayTitle);
             constructionProgressPanel.SetActive(false);
 
+            // purchase/construction state is known only after the target is initialised
+            Mission activatedMission = mission;
+            linkedComplex.InvokeOrSubscribe(() =>
+            {
+                if (this.mission == activatedMission)
+                    ActivateUnlockStage();
+            });
+        }
+
+        private void ActivateUnlockStage()
+        {
             // if there is purchase stage
-            if (unlockingMission.LinkedBuilding.CanBePurchased)
+            if (linkedComplex.CanBePurchased)
             {
                 RedrawRequiredResources();
 
-                unlockingMission.LinkedBuilding.SubscribeOnResourcePlaced(RedrawRequiredResources);
-                unlockingMission.LinkedBuilding.SubscribeOnPurchased(OnPurchased);
+                linkedComplex.SubscribeOnResourcePlaced(RedrawRequiredResources);
+                linkedComplex.SubscribeOnPurchased(OnPurchased);
             }
             else
             {
@@ -431,7 +446,14 @@ namespace Watermelon
         {
             resourcePool.ReturnToPoolEverything();
 
-            ResourcesList currentCostLeft = unlockingMission.LinkedBuilding.CostLeft;
+            ResourcesList currentCostLeft = linkedComplex.CostLeft;
+
+            // the target isn't initialised yet - the mission redraws once it is
+            if (currentCostLeft == null)
+            {
+                resourcesUI = new MissionBuildRequiredResource[0];
+                return;
+            }
 
             resourcesUI = new MissionBuildRequiredResource[currentCostLeft.Count];
             for (int i = 0; i < resourcesUI.Length; i++)
@@ -467,10 +489,10 @@ namespace Watermelon
         public override void Disable()
         {
             CurrencyController.UnsubscribeGlobalCallback(OnCurrencyAmountChanged);
-            unlockingMission.LinkedBuilding.UnsubscribeOnPurchased(OnPurchased);
-            unlockingMission.LinkedBuilding.UnsubscribeOnResourcePlaced(RedrawRequiredResources);
-            unlockingMission.LinkedBuilding.UnsubscribeOnConstructed(OnConstructed);
-            unlockingMission.LinkedBuilding.UnsubscribeOnGotHit(OnGotHit);
+            linkedComplex.UnsubscribeOnPurchased(OnPurchased);
+            linkedComplex.UnsubscribeOnResourcePlaced(RedrawRequiredResources);
+            linkedComplex.UnsubscribeOnConstructed(OnConstructed);
+            linkedComplex.UnsubscribeOnGotHit(OnGotHit);
 
             resourcePool.ReturnToPoolEverything();
         }
@@ -483,19 +505,19 @@ namespace Watermelon
         private void OnPurchased()
         {
             // if there is a construction stage
-            if (unlockingMission.LinkedBuilding.SubscribeOnConstructed(OnConstructed))
+            if (linkedComplex.SubscribeOnConstructed(OnConstructed))
             {
                 constructionProgressPanel.SetActive(true);
 
                 OnGotHit();
-                unlockingMission.LinkedBuilding.SubscribeOnGotHit(OnGotHit);
-                constructionIconImage.sprite = unlockingMission.LinkedBuilding.GetConstrutionIcon();
+                linkedComplex.SubscribeOnGotHit(OnGotHit);
+                constructionIconImage.sprite = linkedComplex.GetConstrutionIcon();
             }
         }
 
         private void OnGotHit()
         {
-            constructionProgressText.text = unlockingMission.LinkedBuilding.HitsMade + "/" + unlockingMission.LinkedBuilding.ConstructionHitsRequired;
+            constructionProgressText.text = linkedComplex.HitsMade + "/" + linkedComplex.ConstructionHitsRequired;
         }
 
         private void OnConstructed()

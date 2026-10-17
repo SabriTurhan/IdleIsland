@@ -13,6 +13,9 @@ namespace Watermelon
         // otherwise - open global upgrades page
         protected bool IsLocalTrigger => !upgrades.IsNullOrEmpty();
 
+        // local trigger with every upgrade locked by missions has nothing to offer
+        protected bool HasAvailableUpgrades => !IsLocalTrigger || upgrades.Exists(upgrade => !(upgrade is AbstractLocalUpgrade localUpgrade && localUpgrade.IsLocked));
+
         protected virtual void Awake()
         {
             upgrades = new List<IUpgrade>();

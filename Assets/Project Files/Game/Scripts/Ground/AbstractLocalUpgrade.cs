@@ -33,8 +33,14 @@ namespace Watermelon
 
         public int UpgradeLevel => UpgradeIndex + 1;
 
+        // save is linked when the owning building initialises
+        public bool IsInitialised => save != null;
+
         public abstract int UpgradesCount { get; }
         public bool IsMaxedOut => UpgradeIndex + 1 >= UpgradesCount;
+
+        // locked upgrades are hidden from the upgrades page and can't be bought
+        public virtual bool IsLocked => false;
 
         public UpgradeType Type => UpgradeType.Local;
 

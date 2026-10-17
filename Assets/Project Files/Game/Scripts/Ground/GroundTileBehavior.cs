@@ -19,6 +19,17 @@ namespace Watermelon
 
         private List<IGroundOpenable> openables = new List<IGroundOpenable>();
 
+        // which tile an object (building, resource, ...) is placed on - it stays hidden until that tile opens
+        private static Dictionary<IGroundOpenable, GroundTileBehavior> openableTiles = new Dictionary<IGroundOpenable, GroundTileBehavior>();
+
+        public static GroundTileBehavior GetTile(IGroundOpenable openable)
+        {
+            if (openable != null && openableTiles.TryGetValue(openable, out GroundTileBehavior tile) && tile != null)
+                return tile;
+
+            return null;
+        }
+
         public bool IsInitialised { get; private set; }
         public bool IsOpen { get; private set; }
 
@@ -27,6 +38,7 @@ namespace Watermelon
             if (!openables.Contains(openable))
             {
                 openables.Add(openable);
+                openableTiles[openable] = this;
 
                 if (IsInitialised)
                 {
@@ -114,6 +126,15 @@ namespace Watermelon
 #if UNITY_EDITOR
         private Color gizmoDefaultColorDev;
         private Vector3 tileSize;
+
+        private void OnDestroy()
+        {
+            foreach (var openable in openables)
+            {
+                if (openableTiles.TryGetValue(openable, out GroundTileBehavior tile) && tile == this)
+                    openableTiles.Remove(openable);
+            }
+        }
 
         private void OnValidate()
         {

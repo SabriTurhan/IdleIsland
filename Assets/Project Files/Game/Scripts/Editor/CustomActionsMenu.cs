@@ -26,10 +26,57 @@ namespace Watermelon
         private static void GetAllResources()
         {
             Currency[] currencies = CurrencyController.Currencies;
+            List<Currency> inventoryCurrencies = new List<Currency>();
+
             foreach (var currency in currencies)
             {
-                CurrencyController.Set(currency.CurrencyType, 10000);
+                // food is eaten on pickup, giving it does nothing useful
+                if (EnergyController.IsFoorResource(currency.CurrencyType))
+                    continue;
+
+                if (currency.Data.UseInventory)
+                {
+                    CurrencyController.Set(currency.CurrencyType, 0);
+                    inventoryCurrencies.Add(currency);
+                }
+                else
+                {
+                    CurrencyController.Set(currency.CurrencyType, 10000);
+                }
             }
+
+            // bag items share the bag capacity, keep some free space so the player can still pick things up
+            PlayerInventory inventory = GetInventory();
+            if (inventory != null && inventoryCurrencies.Count > 0)
+            {
+                int amountPerCurrency = Mathf.FloorToInt(inventory.MaxCapacity * 0.8f / inventoryCurrencies.Count);
+                foreach (var currency in inventoryCurrencies)
+                {
+                    CurrencyController.Set(currency.CurrencyType, amountPerCurrency);
+                }
+            }
+        }
+
+        // Sets the amount, but never more than 80% of the player's bag (a full bag blocks every pickup)
+        private static void SetResource(CurrencyType currencyType, int amount)
+        {
+            Currency currency = CurrencyController.GetCurrency(currencyType);
+            PlayerInventory inventory = GetInventory();
+
+            if (currency != null && currency.Data.UseInventory && inventory != null)
+            {
+                int freeSpace = Mathf.FloorToInt(inventory.MaxCapacity * 0.8f) - (inventory.CurrentCapacity - currency.Amount);
+                amount = Mathf.Clamp(amount, 0, Mathf.Max(0, freeSpace));
+            }
+
+            CurrencyController.Set(currencyType, amount);
+        }
+
+        private static PlayerInventory GetInventory()
+        {
+            PlayerBehavior player = PlayerBehavior.GetBehavior();
+
+            return player != null ? player.Inventory : null;
         }
 
         [MenuItem("Actions/Get Resources/Coins", priority = 24)]
@@ -41,67 +88,67 @@ namespace Watermelon
         [MenuItem("Actions/Get Resources/Wood", priority = 24)]
         private static void GetWood()
         {
-            CurrencyController.Set(CurrencyType.Wood, 2000);
+            SetResource(CurrencyType.Wood, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Stone", priority = 25)]
         private static void GetStone()
         {
-            CurrencyController.Set(CurrencyType.Stone, 2000);
+            SetResource(CurrencyType.Stone, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Fiber", priority = 26)]
         private static void GetFiber()
         {
-            CurrencyController.Set(CurrencyType.Fiber, 2000);
+            SetResource(CurrencyType.Fiber, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Rope", priority = 26)]
         private static void GetRope()
         {
-            CurrencyController.Set(CurrencyType.Rope, 2000);
+            SetResource(CurrencyType.Rope, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Planks", priority = 26)]
         private static void GetPlanks()
         {
-            CurrencyController.Set(CurrencyType.Planks, 2000);
+            SetResource(CurrencyType.Planks, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Bricks", priority = 26)]
         private static void GetBricks()
         {
-            CurrencyController.Set(CurrencyType.Bricks, 2000);
+            SetResource(CurrencyType.Bricks, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Berries", priority = 26)]
         private static void GetBerries()
         {
-            CurrencyController.Set(CurrencyType.Berries, 2000);
+            SetResource(CurrencyType.Berries, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Coconuts", priority = 26)]
         private static void GetCoconuts()
         {
-            CurrencyController.Set(CurrencyType.Coconut, 2000);
+            SetResource(CurrencyType.Coconut, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Pumpkins", priority = 26)]
         private static void GetPumpkins()
         {
-            CurrencyController.Set(CurrencyType.Pumpkin, 2000);
+            SetResource(CurrencyType.Pumpkin, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Fish", priority = 26)]
         private static void GetFish()
         {
-            CurrencyController.Set(CurrencyType.Fish, 2000);
+            SetResource(CurrencyType.Fish, 2000);
         }
 
         [MenuItem("Actions/Get Resources/Scissors", priority = 26)]
         private static void GetScissors()
         {
-            CurrencyController.Set(CurrencyType.Scissors, 2000);
+            SetResource(CurrencyType.Scissors, 2000);
         }
         #endregion
 

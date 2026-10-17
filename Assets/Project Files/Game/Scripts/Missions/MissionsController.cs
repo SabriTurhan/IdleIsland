@@ -147,6 +147,48 @@ namespace Watermelon
             return activationMissionIndex;
         }
 
+        // redraws the missions panel when the active mission switches its target
+        public static void RefreshActiveMissionUI()
+        {
+            if (activeMission != null && missionUIPanel != null)
+                missionUIPanel.ActivateMission(activeMission);
+        }
+
+        // true if a collect mission that is not completed yet still needs this currency
+        public static bool IsCurrencyRequiredByPendingMission(CurrencyType currencyType)
+        {
+            if (missions == null)
+                return false;
+
+            for (int i = 0; i < missions.Length; i++)
+            {
+                CollectMission collectMission = missions[i] as CollectMission;
+                if (collectMission == null || collectMission.CurrencyType != currencyType)
+                    continue;
+
+                if (collectMission.MissionStage == Mission.Stage.Uninitialised || collectMission.MissionStage == Mission.Stage.Active)
+                    return true;
+            }
+
+            return false;
+        }
+
+        // currency the active collect mission is waiting for, if any
+        public static bool TryGetActiveCollectCurrency(out CurrencyType currencyType)
+        {
+            CollectMission collectMission = activeMission as CollectMission;
+            if (collectMission != null && collectMission.MissionStage == Mission.Stage.Active)
+            {
+                currencyType = collectMission.CurrencyType;
+
+                return true;
+            }
+
+            currencyType = CurrencyType.Coins;
+
+            return false;
+        }
+
         public static Mission GetMissionById(string id)
         {
             if (missions == null)

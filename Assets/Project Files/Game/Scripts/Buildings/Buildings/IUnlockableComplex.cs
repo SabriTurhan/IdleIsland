@@ -39,6 +39,9 @@ namespace Watermelon
         Sprite GetConstrutionIcon();
 
         bool SubscribeOnFullyUnlocked(SimpleCallback callback);
+
+        // invokes the callback once the complex is initialised (immediately if it already is)
+        void InvokeOrSubscribe(SimpleCallback callback);
         bool UnsubscribeOnFullyUnlocked(SimpleCallback callback);
     }
 }
