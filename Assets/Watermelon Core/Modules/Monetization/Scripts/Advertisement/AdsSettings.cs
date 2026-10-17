@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Watermelon
 {
-    [HelpURL("https://www.notion.so/wmelongames/Advertisement-221053e32d4047bb880275027daba9f0?pvs=4")]
     public class AdsSettings : ScriptableObject
     {
         [BoxGroup("Advertisement", "Advertisement")]

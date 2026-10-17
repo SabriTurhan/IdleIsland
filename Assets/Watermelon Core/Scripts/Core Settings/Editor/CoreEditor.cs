@@ -1,4 +1,4 @@
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 using UnityEngine;
 
@@ -25,7 +25,6 @@ namespace Watermelon
         public static Color AdsDummyBackgroundColor { get; private set; } = new Color(0.2f, 0.2f, 0.3f);
         public static Color AdsDummyMainColor { get; private set; } = new Color(0.2f, 0.3f, 0.7f);
 
-        public static bool ShowWatermelonPromotions { get; private set; } = true;
 
         static CoreEditor()
         {
@@ -86,7 +85,6 @@ namespace Watermelon
             AdsDummyMainColor = settings.AdsDummyMainColor;
 
             // Other
-            ShowWatermelonPromotions = settings.ShowWatermelonPromotions;
         }
 
         public static string FormatPath(string path)

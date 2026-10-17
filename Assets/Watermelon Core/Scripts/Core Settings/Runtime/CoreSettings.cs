@@ -33,9 +33,5 @@ namespace Watermelon
 
         [SerializeField] Color adsDummyMainColor = new Color(0.15f, 0.37f, 0.6f, 1.0f);
         public Color AdsDummyMainColor => adsDummyMainColor;
-
-        [Header("Other")]
-        [SerializeField] bool showWatermelonPromotions = true;
-        public bool ShowWatermelonPromotions => showWatermelonPromotions;
     }
 }
