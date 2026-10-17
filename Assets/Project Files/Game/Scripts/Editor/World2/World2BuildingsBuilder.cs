@@ -17,6 +17,7 @@ namespace Watermelon.World2
         public const string SAIL_LOOM = FOLDER + "/Sail Loom.prefab";
         public const string PIRATE_SHIP = FOLDER + "/Pirate Ship Building.prefab";
         public const string CURSED_TILE = FOLDER + "/Cursed Land Tile.prefab";
+        public const string CURSED_TALL_TILE = FOLDER + "/Cursed Land Tile Tall.prefab";
 
         [MenuItem("Tools/World 2/3. Build Buildings And Props", priority = 3)]
         public static void BuildAll()
@@ -34,7 +35,8 @@ namespace Watermelon.World2
             BuildForge(material, glow);
             BuildSailLoom(material);
             BuildShip(material);
-            BuildCursedTile(material);
+            BuildCursedTile(material, "Land Tile With Obstacle", CURSED_TILE, 3);
+            BuildCursedTile(material, "Land Tile Tall With Obstacle", CURSED_TALL_TILE, 4);
             BuildProps(material, glow);
 
             AssetDatabase.SaveAssets();
@@ -176,12 +178,12 @@ namespace Watermelon.World2
         }
 
         // obstacle tile whose closed visuals are purple cursed thorns, opened with torches
-        private static void BuildCursedTile(Material material)
+        private static void BuildCursedTile(Material material, string template, string path, int seed)
         {
-            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Project Files/Game/Prefabs/Ground/Main Tiles/Land Tile With Obstacle.prefab");
+            GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>("Assets/Project Files/Game/Prefabs/Ground/Main Tiles/" + template + ".prefab");
             GameObject instance = (GameObject)PrefabUtility.InstantiatePrefab(prefab);
             PrefabUtility.UnpackPrefabInstance(instance, PrefabUnpackMode.OutermostRoot, InteractionMode.AutomatedAction);
-            instance.name = "Cursed Land Tile";
+            instance.name = System.IO.Path.GetFileNameWithoutExtension(path);
 
             Transform closed = null;
             foreach (Transform child in instance.GetComponentsInChildren<Transform>(true))
@@ -190,9 +192,9 @@ namespace Watermelon.World2
             }
 
             for (int i = closed.childCount - 1; i >= 0; i--) Object.DestroyImmediate(closed.GetChild(i).gameObject);
-            AddMesh(closed, "Cursed Thorns", PirateArtAssets.SaveMesh(PirateModels.CursedThorns(3)), material, new Vector3(0, -0.05f, 0), Vector3.zero);
+            AddMesh(closed, "Cursed Thorns", PirateArtAssets.SaveMesh(PirateModels.CursedThorns(seed)), material, new Vector3(0, -0.05f, 0), Vector3.zero);
 
-            Save(instance, CURSED_TILE);
+            Save(instance, path);
         }
 
         private class PropDefinition
@@ -216,6 +218,22 @@ namespace Watermelon.World2
                 new PropDefinition { Name = "Dead Tree", Mesh = PirateModels.DeadTree(5), ObstacleSize = new Vector3(0.6f, 1f, 0.6f) },
                 new PropDefinition { Name = "Cursed Thorns", Mesh = PirateModels.CursedThorns(9), ObstacleSize = new Vector3(4.5f, 1f, 4.5f) },
             };
+
+            // tombstone from the template's unused model
+            Mesh tombstone = null;
+            foreach (Object asset in AssetDatabase.LoadAllAssetsAtPath("Assets/Project Files/Game/Models/Buildings/tombstone.fbx"))
+                if (asset is Mesh mesh) tombstone = mesh;
+            if (tombstone != null)
+            {
+                GameObject prop = new GameObject("Tombstone");
+                prop.AddComponent<MeshFilter>().sharedMesh = tombstone;
+                prop.AddComponent<MeshRenderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>("Assets/Project Files/Game/Materials/Buildings.mat");
+                NavMeshObstacle obstacle = prop.AddComponent<NavMeshObstacle>();
+                obstacle.carving = true;
+                obstacle.size = Vector3.Max(tombstone.bounds.size, new Vector3(0.4f, 1f, 0.4f));
+                obstacle.center = tombstone.bounds.center;
+                Save(prop, PROPS_FOLDER + "/Tombstone.prefab");
+            }
 
             foreach (PropDefinition definition in props)
             {

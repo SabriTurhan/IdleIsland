@@ -24,6 +24,9 @@ EditorBuildSettings:
     path: Assets/Watermelon Core/Examples/Example 03 - Haptic/Scenes/Haptic Example
       Scene.unity
     guid: e730434b98fac584ba6dc410b97c41f5
+  - enabled: 1
+    path: Assets/Project Files/Game/Scenes/Worlds/World 2 Pirate Cove.unity
+    guid: 0867ed99a42624fe5b01749236ea602a
   m_configObjects:
     com.unity.input.settings: {fileID: 11400000, guid: ce10a941858183b4490f5d437afa5066,
       type: 2}

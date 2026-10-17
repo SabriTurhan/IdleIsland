@@ -4,6 +4,7 @@ namespace Watermelon
 {
     public class WorldChangeZoneBehavior : MonoBehaviour, IGroundOpenable
     {
+        // -1: the final voyage, plays the ending instead of loading another world
         [WorldPicker]
         [SerializeField] int worldIndex;
         public int WorldIndex => worldIndex;
@@ -21,7 +22,7 @@ namespace Watermelon
         {
             defaultScale = transform.localScale;
 
-            worldData = WorldController.GetWorldData(worldIndex);
+            worldData = worldIndex >= 0 ? WorldController.GetWorldData(worldIndex) : null;
         }
 
         private void OnTriggerEnter(Collider other)
@@ -51,6 +52,13 @@ namespace Watermelon
 
         private void LoadNextWorld()
         {
+            if (worldIndex < 0)
+            {
+                OnWorldChangeZoneEntered?.Invoke();
+                World2Story.PlayEnding(this);
+                return;
+            }
+
             if(worldData != null)
             {
                 OnWorldChangeZoneEntered?.Invoke();
@@ -101,7 +109,7 @@ namespace Watermelon
 
         private void ValidateWorldIndex()
         {
-            if (!WorldController.IsWorldExists(worldIndex))
+            if (worldIndex >= 0 && !WorldController.IsWorldExists(worldIndex))
             {
                 Debug.LogError("Incorrect world index!", gameObject);
             }

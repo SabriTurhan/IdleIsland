@@ -19,7 +19,7 @@ MonoBehaviour:
       name: 'World 1 [Full Demo]'
     id: 608437bb-6374-4923-8489-096284bf32cc
   - scene:
-      scene: {fileID: 102900000, guid: b987323407a93a541963884fe5cb7501, type: 3}
-      path: Assets/Project Files/Game/Scenes/Worlds/World 2 [Alt Demo].unity
-      name: 'World 2 [Alt Demo]'
+      scene: {fileID: 102900000, guid: 0867ed99a42624fe5b01749236ea602a, type: 3}
+      path: Assets/Project Files/Game/Scenes/Worlds/World 2 Pirate Cove.unity
+      name: World 2 Pirate Cove
     id: 6fe84aed-5edb-4155-8fd2-99dfb1c08900

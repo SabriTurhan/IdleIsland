@@ -23,6 +23,8 @@ namespace Watermelon
         [Header("First time loaded")]
         [SerializeField] protected bool resetCurrencyOnFirstTimeLoad;
         [SerializeField, ShowIf("resetCurrencyOnFirstTimeLoad")] protected List<CurrencyAmount> defaultCurrency;
+        // coins survive the reset (the player arrives with an empty bag but a full purse)
+        [SerializeField, ShowIf("resetCurrencyOnFirstTimeLoad")] protected bool keepCoinsOnReset;
 
         [SerializeField] bool restoreHungerPointsOnFirstTimeLoad;
 
@@ -55,6 +57,9 @@ namespace Watermelon
                     for (int i = 0; i < CurrencyController.Currencies.Length; i++)
                     {
                         currency = CurrencyController.Currencies[i];
+
+                        if (keepCoinsOnReset && currency.CurrencyType == CurrencyType.Coins)
+                            continue;
 
                         if (currency.Amount > 0)
                             CurrencyController.Set(currency.CurrencyType, 0);
