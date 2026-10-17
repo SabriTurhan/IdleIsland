@@ -102,6 +102,11 @@ namespace Watermelon
                 // The flying resource has reached this point
                 flyingResource.gameObject.SetActive(false);
 
+                // more resources can be in the air than the cost needs: the first one to complete the cost buys,
+                // the ones landing after that (point already bought and destroyed) are ignored
+                if (this == null || Save.IsBought)
+                    return;
+
                 displayedCost -= one;
 
                 if (displayedCost.Count == 0)
@@ -111,7 +116,7 @@ namespace Watermelon
                     UnlockableComplex.Purchase();
                     OnPurhcased?.Invoke();
                 }
-                else
+                else if (resourceCanvas != null)
                 {
                     resourceCanvas.SetData(displayedCost);
                 }
@@ -162,6 +167,9 @@ namespace Watermelon
 
         public void Destroy()
         {
+            if (this == null)
+                return;
+
             if (resourceCanvas != null)
                 Destroy(resourceCanvas.gameObject);
 

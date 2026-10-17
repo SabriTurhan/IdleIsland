@@ -195,6 +195,10 @@ namespace Watermelon
 
         public virtual void Purchase()
         {
+            // already purchased (e.g. a late resource completed the cost again)
+            if (!CanBePurchased)
+                return;
+
             purchaser.Destroy();
             CanBePurchased = false;
 

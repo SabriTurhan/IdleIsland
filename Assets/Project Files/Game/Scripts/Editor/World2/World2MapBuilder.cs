@@ -132,6 +132,18 @@ namespace Watermelon.World2
 
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
+
+            // the world element list collected during the build could still point at replaced objects
+            // (construction points of the cursed tiles ended up unlinked): reopen, collect again, verify, save
+            scene = EditorSceneManager.OpenScene(SCENE_PATH, OpenSceneMode.Single);
+            foreach (MonoBehaviour behaviour in Object.FindObjectsByType<MonoBehaviour>(FindObjectsInactive.Include, FindObjectsSortMode.None))
+            {
+                if (behaviour is ISceneSavingCallback callback) callback.OnSceneSaving();
+            }
+            ValidateWorldElements();
+            EditorSceneManager.MarkSceneDirty(scene);
+            EditorSceneManager.SaveScene(scene);
+
             RegisterWorld();
 
             Debug.Log("[World 2] Pirate Cove built: " + context.MissionList.Count + " missions");
@@ -1003,6 +1015,24 @@ namespace Watermelon.World2
 
             using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
                 return new System.Guid(md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(path.ToString()))).ToString();
+        }
+
+        private static void ValidateWorldElements()
+        {
+            WorldBehavior world = Object.FindFirstObjectByType<WorldBehavior>();
+            SerializedProperty list = new SerializedObject(world).FindProperty("registredWorldElements");
+            HashSet<Object> registered = new HashSet<Object>();
+            for (int i = 0; i < list.arraySize; i++)
+            {
+                Object element = list.GetArrayElementAtIndex(i).objectReferenceValue;
+                if (element == null) Debug.LogError("[World 2] World element list has a missing entry");
+                else registered.Add(element);
+            }
+
+            foreach (Component element in world.GetComponentsInChildren(typeof(IWorldElement)))
+            {
+                if (!registered.Contains(element)) Debug.LogError("[World 2] World element not registered: " + element.name, element);
+            }
         }
 
         // World 2 in the worlds database now points to this scene (same world id, so existing saves continue here)
