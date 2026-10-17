@@ -60,9 +60,65 @@ namespace Watermelon
         private BoxCollider boxCollider;
         public BoxCollider BoxCollider => boxCollider;
 
+        // the construction visuals carve the navmesh almost up to the trigger edge,
+        // so on most sides the player couldn't get close enough to start building
+        private const float TRIGGER_MARGIN = 0.5f;
+
+        // "stand here to build" hint, shown only for the first few constructions
+        private const string BUILD_HINT_TEXT = "STAND HERE TO BUILD!";
+        private const int BUILD_HINT_CONSTRUCTIONS_LIMIT = 3;
+        private const float BUILD_HINT_DISTANCE = 2.0f;
+        private const float BUILD_HINT_DELAY = 0.5f;
+        private const float BUILD_HINT_COOLDOWN = 4.0f;
+        private static readonly int FLOATING_TEXT_HASH = "Floating".GetHashCode();
+
+        private static SimpleIntSave buildHintSave;
+        private static float nextBuildHintTime;
+        private float playerNearTime;
+
         private void Awake()
         {
             boxCollider = GetComponent<BoxCollider>();
+
+            if (boxCollider != null)
+            {
+                Vector3 scale = boxCollider.transform.lossyScale;
+                boxCollider.size += new Vector3(TRIGGER_MARGIN * 2 / Mathf.Max(scale.x, 0.01f), 0, TRIGGER_MARGIN * 2 / Mathf.Max(scale.z, 0.01f));
+            }
+        }
+
+        private void Update()
+        {
+            if (!IsActive || !IsDistanceToggleInCloseMode || UnlocableComplex == null)
+                return;
+
+            PlayerBehavior player = PlayerBehavior.GetBehavior();
+            if (player == null)
+                return;
+
+            if (buildHintSave == null)
+                buildHintSave = SaveController.GetSaveObject<SimpleIntSave>("constructionBuildHint");
+
+            if (buildHintSave.Value >= BUILD_HINT_CONSTRUCTIONS_LIMIT)
+                return;
+
+            Vector3 playerPosition = PlayerBehavior.Position;
+            bool isPlayerNear = boxCollider == null || Vector3.Distance(boxCollider.ClosestPoint(playerPosition), playerPosition) <= BUILD_HINT_DISTANCE;
+
+            if (!isPlayerNear || player.IsHittingObject(this))
+            {
+                playerNearTime = 0;
+                return;
+            }
+
+            playerNearTime += Time.deltaTime;
+
+            if (playerNearTime >= BUILD_HINT_DELAY && Time.time >= nextBuildHintTime)
+            {
+                FloatingTextController.SpawnFloatingText(FLOATING_TEXT_HASH, BUILD_HINT_TEXT, playerPosition + new Vector3(0, 2.5f, 0), Quaternion.identity, 1.0f, Color.white);
+
+                nextBuildHintTime = Time.time + BUILD_HINT_COOLDOWN;
+            }
         }
 
         public bool Init(IUnlockableComplex unlockableComplex)
@@ -137,6 +193,10 @@ namespace Watermelon
                     constructionTask.Disable();
 
                 save.IsBought = true;
+
+                if (buildHintSave == null)
+                    buildHintSave = SaveController.GetSaveObject<SimpleIntSave>("constructionBuildHint");
+                buildHintSave.Value += 1;
 
                 PlayerBehavior.GetBehavior().OnHittableOutsideRangeOrCompleted(this);
                 UnlocableComplex.Construct();

@@ -308,6 +308,12 @@ namespace Watermelon
             }
         }
 
+        // true while the player is actually hitting this object (standing in its range, not running)
+        public bool IsHittingObject(IHitable hitable)
+        {
+            return IsHitting && hitableObjectsInRange.Contains(hitable);
+        }
+
         public void RunHitAnimation()
         {
             if (hitableObjectsInRange.Count == 0)
