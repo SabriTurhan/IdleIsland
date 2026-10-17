@@ -298,6 +298,70 @@ namespace Watermelon.World2
             return mesh.Build("pirate_torch_barrel");
         }
 
+        // stone mausoleum of the captain, the doorway (sub-world trigger) is at the origin, the front faces -Z
+        public static Mesh Crypt()
+        {
+            PirateMesh mesh = new PirateMesh();
+            const float depth = 3.0f, front = 0.25f;
+            float centerZ = front + depth * 0.5f;
+
+            // plinth reaches below the ground so it also sits well on lower sand tiles
+            mesh.Box(new Vector3(4.0f, 0.9f, depth + 0.5f), 0.08f, new Vector3(0, -0.2f, centerZ), Vector3.zero, Band.Stone, 0.25f, 0.85f);
+            // walls
+            mesh.Box(new Vector3(3.4f, 2.3f, depth), 0.1f, new Vector3(0, 1.4f, centerZ + 0.1f), Vector3.zero, Band.Stone, 0.05f, 0.7f);
+            mesh.Box(new Vector3(3.6f, 0.2f, depth + 0.2f), 0.04f, new Vector3(0, 2.6f, centerZ + 0.1f), Vector3.zero, Band.Stone, 0.0f, 0.5f);
+            // pitched roof
+            Vector2[] gable = { new Vector2(-2.05f, 2.68f), new Vector2(2.05f, 2.68f), new Vector2(0f, 3.75f) };
+            mesh.Add(Shapes.Prism(gable, depth + 0.5f), new Vector3(0, 0, centerZ + 0.1f), Vector3.zero, Vector3.one, Band.Iron, 0.0f, 0.75f);
+            mesh.Box(new Vector3(0.22f, 0.22f, depth + 0.6f), 0.03f, new Vector3(0, 3.76f, centerZ + 0.1f), Vector3.zero, Band.Stone, 0.0f, 0.5f);
+            // moss on the roof edges
+            mesh.Box(new Vector3(0.9f, 0.08f, 0.7f), 0.02f, new Vector3(-1.4f, 2.92f, front + 0.4f), new Vector3(0, 0, 27), Band.Moss, 0.0f, 0.5f);
+            mesh.Box(new Vector3(0.7f, 0.08f, 0.9f), 0.02f, new Vector3(1.2f, 3.05f, front + 2.3f), new Vector3(0, 0, -27), Band.Moss, 0.0f, 0.5f);
+
+            // columns with capitals
+            for (int side = -1; side <= 1; side += 2)
+            {
+                mesh.Box(new Vector3(0.6f, 0.25f, 0.6f), 0.04f, new Vector3(side * 1.45f, 0.38f, front), Vector3.zero, Band.Stone, 0.1f, 0.6f);
+                mesh.Cylinder(0.24f, 0.21f, 2.2f, 8, new Vector3(side * 1.45f, 1.5f, front), Vector3.zero, Band.Bone, 0.0f, 0.55f);
+                mesh.Box(new Vector3(0.62f, 0.22f, 0.62f), 0.04f, new Vector3(side * 1.45f, 2.6f, front), Vector3.zero, Band.Stone, 0.0f, 0.5f);
+            }
+
+            // doorway frame and lintel with the captain's skull and crossbones
+            mesh.Box(new Vector3(1.8f, 0.3f, 0.3f), 0.04f, new Vector3(0, 2.12f, front - 0.02f), Vector3.zero, Band.Stone, 0.0f, 0.5f);
+            mesh.Box(new Vector3(0.22f, 1.9f, 0.3f), 0.03f, new Vector3(-0.8f, 1.05f, front - 0.02f), Vector3.zero, Band.Stone, 0.05f, 0.6f);
+            mesh.Box(new Vector3(0.22f, 1.9f, 0.3f), 0.03f, new Vector3(0.8f, 1.05f, front - 0.02f), Vector3.zero, Band.Stone, 0.05f, 0.6f);
+            // on the gable, in front of the roof's front face (z = front - 0.25)
+            const float emblem = front - 0.42f;
+            mesh.Sphere(0.24f, 3, 8, new Vector3(0, 3.08f, emblem), new Vector3(1f, 1f, 0.6f), Band.Bone, 0.0f, 0.45f);
+            mesh.Box(new Vector3(0.24f, 0.14f, 0.16f), 0.03f, new Vector3(0, 2.86f, emblem + 0.02f), Vector3.zero, Band.Bone, 0.1f, 0.5f);
+            mesh.Sphere(0.06f, 2, 6, new Vector3(0.09f, 3.1f, emblem - 0.13f), Vector3.one, Band.Black, 0.3f, 0.9f);
+            mesh.Sphere(0.06f, 2, 6, new Vector3(-0.09f, 3.1f, emblem - 0.13f), Vector3.one, Band.Black, 0.3f, 0.9f);
+            mesh.Box(new Vector3(0.9f, 0.1f, 0.08f), 0f, new Vector3(0, 2.96f, emblem + 0.06f), new Vector3(0, 0, 32), Band.Bone, 0.0f, 0.4f);
+            mesh.Box(new Vector3(0.9f, 0.1f, 0.08f), 0f, new Vector3(0, 2.96f, emblem + 0.06f), new Vector3(0, 0, -32), Band.Bone, 0.0f, 0.4f);
+
+            // steps leading up to the door
+            mesh.Box(new Vector3(1.9f, 0.14f, 0.45f), 0.03f, new Vector3(0, 0.07f, front - 0.45f), Vector3.zero, Band.Stone, 0.1f, 0.6f);
+            mesh.Box(new Vector3(1.7f, 0.14f, 0.35f), 0.03f, new Vector3(0, 0.2f, front - 0.15f), Vector3.zero, Band.Stone, 0.1f, 0.6f);
+
+            return mesh.Build("pirate_crypt");
+        }
+
+        // dark doorway with a faint ghost glow and the lanterns on the columns (glow material)
+        public static Mesh CryptGlow()
+        {
+            PirateMesh mesh = new PirateMesh();
+            const float front = 0.25f;
+            mesh.Box(new Vector3(1.4f, 1.85f, 0.06f), 0f, new Vector3(0, 1.0f, front + 0.12f), Vector3.zero, Band.Coal, 0.6f, 1.0f);
+            mesh.Box(new Vector3(1.0f, 1.2f, 0.04f), 0f, new Vector3(0, 0.75f, front + 0.08f), Vector3.zero, Band.Ghost, 0.2f, 0.9f);
+            for (int side = -1; side <= 1; side += 2)
+            {
+                mesh.Box(new Vector3(0.24f, 0.3f, 0.24f), 0.03f, new Vector3(side * 1.45f, 2.9f, front), Vector3.zero, Band.Ghost, 0.0f, 0.5f);
+                mesh.Cylinder(0.2f, 0.0f, 0.18f, 4, new Vector3(side * 1.45f, 3.12f, front), new Vector3(0, 45, 0), Band.Iron, 0.1f, 0.6f);
+            }
+
+            return mesh.Build("pirate_crypt_glow");
+        }
+
         #endregion
 
         #region Props

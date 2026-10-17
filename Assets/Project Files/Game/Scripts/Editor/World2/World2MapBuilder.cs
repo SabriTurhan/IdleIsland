@@ -417,9 +417,11 @@ namespace Watermelon.World2
                 if (entrance == null) continue;
 
                 context.CaveEntrance = entrance;
-                child.position = CellPosition(14, 22) + new Vector3(0, 0, 0.5f);
-                child.rotation = Quaternion.Euler(0, 180, 0);
+                // the door faces west, towards the graveyard (the crypt itself stands on the gate tile and the sand behind)
+                child.position = CellPosition(14, 22) + new Vector3(-0.6f, 0, 0);
+                child.rotation = Quaternion.Euler(0, 90, 0);
                 child.name = "Crypt Entrance";
+                BuildCryptVisuals(child);
             }
 
             foreach (SubworldBehavior subworld in Object.FindObjectsByType<SubworldBehavior>(FindObjectsInactive.Include, FindObjectsSortMode.None))
@@ -479,6 +481,35 @@ namespace Watermelon.World2
                 AddProp(context, "Cannon", arena.transform, center + direction * back * 0.3f + side * edge * 0.62f, Quaternion.LookRotation(-direction).eulerAngles.y + 25f);
                 AddProp(context, "Barrel", arena.transform, center + direction * back * 0.3f - side * edge * 0.62f, 0f);
             }
+        }
+
+        // the template cave mouth only looks right against a cliff: the crypt gets its own mausoleum model
+        private static void BuildCryptVisuals(Transform entrance)
+        {
+            Transform visuals = entrance.Find("Visuals") ?? entrance;
+            foreach (Transform child in visuals)
+            {
+                if (child.name.StartsWith("Cave_entrance")) child.gameObject.SetActive(false);
+            }
+
+            Transform old = visuals.Find("Crypt");
+            if (old != null) Object.DestroyImmediate(old.gameObject);
+
+            GameObject crypt = new GameObject("Crypt");
+            crypt.transform.SetParent(visuals, false);
+            crypt.AddComponent<MeshFilter>().sharedMesh = PirateArtAssets.SaveMesh(PirateModels.Crypt());
+            crypt.AddComponent<MeshRenderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(PirateArtAssets.MATERIAL_PATH);
+
+            GameObject glow = new GameObject("Crypt Glow");
+            glow.transform.SetParent(crypt.transform, false);
+            glow.AddComponent<MeshFilter>().sharedMesh = PirateArtAssets.SaveMesh(PirateModels.CryptGlow());
+            glow.AddComponent<MeshRenderer>().sharedMaterial = AssetDatabase.LoadAssetAtPath<Material>(PirateArtAssets.MATERIAL_GHOST_PATH);
+
+            // solid walls: the player walks only into the doorway trigger
+            UnityEngine.AI.NavMeshObstacle obstacle = crypt.AddComponent<UnityEngine.AI.NavMeshObstacle>();
+            obstacle.carving = true;
+            obstacle.center = new Vector3(0, 1f, 0.35f + 1.6f);
+            obstacle.size = new Vector3(3.8f, 2f, 3.0f);
         }
 
         // ---------------------------------------------------------------------------------------------------
@@ -601,7 +632,12 @@ namespace Watermelon.World2
             foreach (Transform character in context.Characters)
                 footprints.AddCircle(character.position, character.GetComponent<HelperBehavior>() != null ? 1.2f : 1.4f);
             foreach (Transform special in context.Special)
-                footprints.AddCircle(special.position, special.GetComponent<SubworldEntrance>() != null ? 2.5f : 1.0f);
+            {
+                if (special.GetComponent<SubworldEntrance>() != null)
+                    footprints.AddBox(VisualBounds(special.gameObject), 1.2f);
+                else
+                    footprints.AddCircle(special.position, 1.0f);
+            }
 
             // cells kept clear: start area, ramp and bridge ends, the cells in front of every gate
             HashSet<Vector2Int> clear = new HashSet<Vector2Int>();
