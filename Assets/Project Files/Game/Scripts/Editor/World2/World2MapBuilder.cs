@@ -17,7 +17,7 @@ namespace Watermelon.World2
         private const string WORLD2_SAVE_NAME = "world_pirate_cove";
         private const float CELL = 5f;
 
-        // . water  s sand  l land  t plateau (tall)  R land with the ramp  B water under the bridge
+        // . water  s sand  l land  t plateau (tall, y = 3)  R land with the ramp  B water under the bridge
         // 0-9 u: cursed gate tiles opened by missions (u = plateau)   x y: optional cursed tiles (land / plateau)
         public static readonly string[] MAP =
         {
@@ -62,7 +62,10 @@ namespace Watermelon.World2
 
         private static bool IsTall(char cell) => cell == 't' || cell == 'u' || cell == 'y';
 
-        private static float CellHeight(char cell) => IsTall(cell) ? 4f : cell == 's' ? -0.5f : 0f;
+        // the plateau is as high as the template ramp climbs (3 units)
+        public const float PLATEAU_HEIGHT = 3f;
+
+        private static float CellHeight(char cell) => IsTall(cell) ? PLATEAU_HEIGHT : cell == 's' ? -0.5f : 0f;
 
         // ---------------------------------------------------------------------------------------------------
 
@@ -282,7 +285,7 @@ namespace Watermelon.World2
                 if (child.name.Contains("Tent")) tent = child;
             if (tent != null)
             {
-                tent.position = CellPosition(6, 17, 4f);
+                tent.position = CellPosition(6, 17, PLATEAU_HEIGHT);
                 tent.rotation = Quaternion.identity;
                 tent.name = "Tent Building";
                 BuildingComplexBehavior tentComplex = tent.GetComponent<BuildingComplexBehavior>();
@@ -629,9 +632,9 @@ namespace Watermelon.World2
             AddFixedProp(context, footprints, "Skull Flag", decor, CellPosition(7, 10) + new Vector3(1.5f, 0, -1f), 220f);
             AddFixedProp(context, footprints, "Lantern Post", decor, CellPosition(8, 12) + new Vector3(0, 0, 2.0f), 180f);
             AddFixedProp(context, footprints, "Lantern Post", decor, CellPosition(15, 12) + new Vector3(-1.5f, 0, -2.0f), 90f);
-            AddFixedProp(context, footprints, "Cannon", decor, CellPosition(7, 14, 4f) + new Vector3(-1.2f, 0, 1.2f), 300f);
-            AddFixedProp(context, footprints, "Cannon", decor, CellPosition(9, 18, 4f) + new Vector3(1.4f, 0, 0f), 90f);
-            AddFixedProp(context, footprints, "Skull Flag", decor, CellPosition(6, 15, 4f) + new Vector3(0, 0, 1.5f), 180f);
+            AddFixedProp(context, footprints, "Cannon", decor, CellPosition(7, 14, PLATEAU_HEIGHT) + new Vector3(-1.2f, 0, 1.2f), 300f);
+            AddFixedProp(context, footprints, "Cannon", decor, CellPosition(9, 18, PLATEAU_HEIGHT) + new Vector3(1.4f, 0, 0f), 90f);
+            AddFixedProp(context, footprints, "Skull Flag", decor, CellPosition(6, 15, PLATEAU_HEIGHT) + new Vector3(0, 0, 1.5f), 180f);
             AddFixedProp(context, footprints, "Barrel", decor, CellPosition(3, 6) + new Vector3(1.5f, 0, -1.4f), 0f);
             AddFixedProp(context, footprints, "Crate", decor, CellPosition(3, 7) + new Vector3(0.8f, 0, -1.6f), 20f);
             AddFixedProp(context, footprints, "Lantern Post", decor, CellPosition(2, 4) + new Vector3(-1.5f, 0, 1.6f), 90f);
