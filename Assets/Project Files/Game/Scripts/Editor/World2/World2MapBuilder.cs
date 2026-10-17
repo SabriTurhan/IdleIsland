@@ -141,6 +141,7 @@ namespace Watermelon.World2
                 if (behaviour is ISceneSavingCallback callback) callback.OnSceneSaving();
             }
             ValidateWorldElements();
+            ValidateWater();
             EditorSceneManager.MarkSceneDirty(scene);
             EditorSceneManager.SaveScene(scene);
 
@@ -990,6 +991,17 @@ namespace Watermelon.World2
             serialized.FindProperty("environmentPresetType").intValue = (int)EnvironmentPresetType.World2;
             serialized.ApplyModifiedPropertiesWithoutUndo();
 
+            // the template's non walkable volume touches the water volume at y -1: in this scene it won the overlap
+            // and the whole sea was baked as walkable ground (no swimming, the player could walk off the map)
+            Transform nonWalkable = context.World.Find("Water/Water Plane 40/NavMesh Non Walkable Volume");
+            if (nonWalkable != null)
+            {
+                Component volume = nonWalkable.GetComponent("NavMeshModifierVolume");
+                SerializedObject volumeSerialized = new SerializedObject(volume);
+                volumeSerialized.FindProperty("m_Center").vector3Value = new Vector3(0, -5.3f, 0);
+                volumeSerialized.ApplyModifiedPropertiesWithoutUndo();
+            }
+
             Transform spawn = context.World.Find("Spawn Point");
             spawn.position = CellPosition(15, 8) + new Vector3(0.5f, 0, -0.5f);
             spawn.rotation = Quaternion.Euler(0, 20, 0);
@@ -1051,6 +1063,29 @@ namespace Watermelon.World2
 
             using (System.Security.Cryptography.MD5 md5 = System.Security.Cryptography.MD5.Create())
                 return new System.Guid(md5.ComputeHash(System.Text.Encoding.UTF8.GetBytes(path.ToString()))).ToString();
+        }
+
+        // bakes the navmesh once and checks the sea is "water" (swimming) and the land is walkable
+        private static void ValidateWater()
+        {
+            Unity.AI.Navigation.NavMeshSurface surface = GameObject.Find("World").GetComponent<Unity.AI.Navigation.NavMeshSurface>();
+            surface.BuildNavMesh();
+
+            const int WATER_MASK = 1 << 3;
+            foreach (Vector3 point in new[] { new Vector3(-60, -0.8f, 40), new Vector3(0, -0.8f, -80), new Vector3(70, -0.8f, 0), CellPosition(18, 10, -0.8f), CellPosition(0, 4, -0.8f) })
+            {
+                if (!UnityEngine.AI.NavMesh.SamplePosition(point, out UnityEngine.AI.NavMeshHit hit, 0.6f, UnityEngine.AI.NavMesh.AllAreas) || hit.mask != WATER_MASK)
+                    Debug.LogError("[World 2] Sea is not swimmable water at " + point);
+            }
+
+            foreach (Vector2Int cell in new[] { new Vector2Int(15, 8), new Vector2Int(10, 4), new Vector2Int(14, 21), new Vector2Int(3, 5) })
+            {
+                Vector3 point = CellPosition(cell.x, cell.y, CellHeight(Cell(cell.x, cell.y)));
+                if (!UnityEngine.AI.NavMesh.SamplePosition(point, out UnityEngine.AI.NavMeshHit hit, 0.6f, UnityEngine.AI.NavMesh.AllAreas) || hit.mask == WATER_MASK)
+                    Debug.LogError("[World 2] Land is not walkable at cell " + cell);
+            }
+
+            surface.RemoveData();
         }
 
         private static void ValidateWorldElements()
