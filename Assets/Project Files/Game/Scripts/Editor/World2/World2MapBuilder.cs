@@ -312,9 +312,16 @@ namespace Watermelon.World2
             BuildingComplexBehavior bridge = PlaceBuilding(context, "Bridge", PREFABS + "Buildings/Bridge Building.prefab", 15, 13, 90, 40, (CurrencyType.Wood, 60), (CurrencyType.IronBar, 4));
             // the template bridge is a little short for a 2 cell gap: shift it so both ends rest on the tiles
             bridge.transform.position += new Vector3(0.5f, 0, 0);
+            // the template puts the pay and build spots at the far end of the deck, over the water here: pull them onto the shore
+            foreach (PurchasePoint point in bridge.GetComponentsInChildren<PurchasePoint>(true))
+                point.transform.position -= bridge.transform.forward * 3f;
+            foreach (ConstructionPointBehavior point in bridge.GetComponentsInChildren<ConstructionPointBehavior>(true))
+                point.transform.position -= bridge.transform.forward * 3f;
 
             // D: graveyard
-            PlaceBuilding(context, "Ropes Table", PREFABS + "Buildings/Ropes Craft Table.prefab", 13, 20, 0, 0, (CurrencyType.Wood, 40), (CurrencyType.Fiber, 20));
+            BuildingComplexBehavior ropes = PlaceBuilding(context, "Ropes Table", PREFABS + "Buildings/Ropes Craft Table.prefab", 13, 20, 0, 0, (CurrencyType.Wood, 40), (CurrencyType.Fiber, 20));
+            // the World 1 table asks 30 fiber per rope, the loom and the ship need 35 ropes: keep the escape from turning into a fiber grind
+            World2BuildingsBuilder.SetRecipe(ropes.GetComponentInChildren<ResourceConverterBuildingBehavior>(true), CurrencyType.Rope, (CurrencyType.Fiber, 6));
 
             // F: harbor
             PlaceBuilding(context, "Sail Loom", World2BuildingsBuilder.SAIL_LOOM, 3, 3, 0, 0, (CurrencyType.Wood, 40), (CurrencyType.Rope, 10));
@@ -343,6 +350,11 @@ namespace Watermelon.World2
             }
             stages.GetArrayElementAtIndex(0).FindPropertyRelative("cost").FindPropertyRelative("amount").intValue = 0;
             serialized.ApplyModifiedPropertiesWithoutUndo();
+
+            // the converter only reads the upgrade when it is listed in its buildingUpgrades (the template's campfire
+            // isn't), otherwise it cooks with its own serialized recipe: keep both in sync
+            ResourceConverterBuildingBehavior converter = building.GetComponentInChildren<ResourceConverterBuildingBehavior>(true);
+            if (converter != null) World2BuildingsBuilder.SetRecipe(converter, result, components);
         }
 
         // ---------------------------------------------------------------------------------------------------
@@ -367,17 +379,18 @@ namespace Watermelon.World2
             Transform rest = context.Characters.Find("Helpers Rest Zone");
             if (rest != null) rest.position = CellPosition(15, 8) + new Vector3(2, 0, 2);
 
-            // enemies: pirates in the woods, a brute on the fort, the restless dead on the graveyard
-            AddEnemy(context, EnemyType.PirateSkeleton, 7, 5, 10f);
-            AddEnemy(context, EnemyType.PirateSkeleton, 10, 6, 10f);
-            AddEnemy(context, EnemyType.PirateSkeleton, 9, 9, 12f);
-            AddEnemy(context, EnemyType.PirateSkeleton, 6, 7, 12f);
-            context.BruteSpawn = AddEnemy(context, EnemyType.SkeletonBrute, 9, 16, 25f).transform;
-            AddEnemy(context, EnemyType.PirateSkeleton, 7, 18, 15f);
-            AddEnemy(context, EnemyType.PirateSkeleton, 13, 21, 10f);
-            AddEnemy(context, EnemyType.PirateSkeleton, 15, 18, 10f);
-            AddEnemy(context, EnemyType.PirateSkeleton, 15, 21, 12f);
-            AddEnemy(context, EnemyType.SkeletonBrute, 17, 20, 40f);
+            // enemies: pirates in the woods, a brute on the fort, the restless dead on the graveyard.
+            // Respawns leave time to hammer the cages and graves around them (10 s kept the player fighting non-stop)
+            AddEnemy(context, EnemyType.PirateSkeleton, 7, 5, 18f);
+            AddEnemy(context, EnemyType.PirateSkeleton, 10, 6, 18f);
+            AddEnemy(context, EnemyType.PirateSkeleton, 9, 9, 20f);
+            AddEnemy(context, EnemyType.PirateSkeleton, 6, 7, 20f);
+            context.BruteSpawn = AddEnemy(context, EnemyType.SkeletonBrute, 9, 16, 45f).transform;
+            AddEnemy(context, EnemyType.PirateSkeleton, 7, 18, 20f);
+            AddEnemy(context, EnemyType.PirateSkeleton, 13, 21, 25f);
+            AddEnemy(context, EnemyType.PirateSkeleton, 15, 18, 25f);
+            AddEnemy(context, EnemyType.PirateSkeleton, 15, 21, 28f);
+            AddEnemy(context, EnemyType.SkeletonBrute, 17, 20, 75f);
         }
 
         private static void SetupHelper(HelperBehavior helper, Vector3 position, GroundTileComplexBehavior gate)
@@ -423,6 +436,18 @@ namespace Watermelon.World2
                 child.rotation = Quaternion.Euler(0, 90, 0);
                 child.name = "Crypt Entrance";
                 BuildCryptVisuals(child);
+
+                // the gate tile's pay/build spots sat on the door: the player fell into the crypt the moment it opened.
+                // Hammer it from the graveyard side, in front of the door instead
+                if (context.Gates.TryGetValue('8', out GroundTileComplexBehavior cryptGate))
+                {
+                    Vector3 spot = CellPosition(14, 21) + new Vector3(1f, 0, 0);
+                    context.Reserved.Add(new Vector2Int(14, 21));
+                    foreach (PurchasePoint point in cryptGate.GetComponentsInChildren<PurchasePoint>(true))
+                        point.transform.position = spot.SetY(point.transform.position.y);
+                    foreach (ConstructionPointBehavior point in cryptGate.GetComponentsInChildren<ConstructionPointBehavior>(true))
+                        point.transform.position = spot.SetY(point.transform.position.y);
+                }
             }
 
             foreach (SubworldBehavior subworld in Object.FindObjectsByType<SubworldBehavior>(FindObjectsInactive.Include, FindObjectsSortMode.None))

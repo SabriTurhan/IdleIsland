@@ -28,6 +28,10 @@ namespace Watermelon
         private HealthBehavior health;
         private readonly StringBuilder log = new StringBuilder();
         private float missionStartTime;
+        private Mission playing;
+
+        // collect missions can finish while a product is eaten on pickup (food), so watch the mission, not the amount
+        private bool PlayingMissionOver => playing != null && playing.MissionStage != Mission.Stage.Active;
         private int killCount;
         private readonly Dictionary<CurrencyType, int> soldTotals = new Dictionary<CurrencyType, int>();
 
@@ -124,7 +128,9 @@ namespace Watermelon
                     Write($"MISSION #{mission.transform.GetSiblingIndex() + 1} \"{mission.Title}\" ({mission.GetType().Name})");
                 }
 
+                playing = mission;
                 yield return Play(mission);
+                playing = null;
 
                 if (mission.MissionStage == Mission.Stage.Active && Time.time - missionStartTime > MISSION_TIMEOUT)
                 {
@@ -245,7 +251,7 @@ namespace Watermelon
             int attempts = 0;
             while (Amount(type) < target && Time.time - start < MISSION_TIMEOUT && attempts++ < 400)
             {
-                if (collectMission && MissionsController.ActiveMission != null && MissionsController.ActiveMission.MissionStage != Mission.Stage.Active)
+                if (collectMission && PlayingMissionOver)
                     yield break;
 
                 if (player.Inventory.IsFull()) SellUnneeded(type);
@@ -332,6 +338,8 @@ namespace Watermelon
                 yield return Obtain(component.ResourceType, component.Amount * batch);
             }
 
+            int before = Amount(product);
+
             // drop the inputs into the converter
             Component inStorage = Reflect<Component>(converter, "inStorage");
             Transform takingPoint = inStorage.transform.Find("Taking Point") ?? inStorage.transform;
@@ -341,16 +349,15 @@ namespace Watermelon
             // wait for the products and pick them up
             Component outStorage = converter.OutStorage;
             float start = Time.time;
-            int before = Amount(product);
             yield return WalkTo(outStorage.transform.position, 0.6f, converter.name + " output");
-            while (Amount(product) < Mathf.Min(target, before + batch) && Time.time - start < 120f)
+            while (Amount(product) < Mathf.Min(target, before + batch) && Time.time - start < 120f && !PlayingMissionOver)
             {
                 yield return Wait(1f);
                 if ((outStorage.transform.position - player.transform.position).SetY(0).magnitude > 1.2f)
                     yield return WalkTo(outStorage.transform.position, 0.6f, converter.name + " output");
             }
 
-            if (Amount(product) <= before)
+            if (Amount(product) <= before && !PlayingMissionOver)
                 Issue($"crafting {product} at {converter.name} gave nothing");
         }
 

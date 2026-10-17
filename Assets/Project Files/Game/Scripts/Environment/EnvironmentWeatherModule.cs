@@ -13,6 +13,17 @@ namespace Watermelon
         private ParticleSystem WeatherParticle { get; set; }
         private ParticleSystem OldWeatherParticle { get; set; }
 
+        // the particle is captured: the property is replaced on the next weather change and the particle can be destroyed
+        // with the previous world's camera. A throwing tween completion stays in the tween list and throws every frame.
+        private static void FadeOutParticle(ParticleSystem particle)
+        {
+            particle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
+            Tween.DelayedCall(particle.main.duration, () =>
+            {
+                if (particle != null) Object.Destroy(particle.gameObject);
+            });
+        }
+
         public void SetWeatherPreset(EnvironmentWeatherPreset preset, float transitionDuration)
         {
             if (CurrentWeatherPreset != null)
@@ -24,11 +35,7 @@ namespace Watermelon
             if (OldWeatherPreset != null && WeatherParticle != null)
             {
                 OldWeatherParticle = WeatherParticle;
-                OldWeatherParticle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                Tween.DelayedCall(OldWeatherParticle.main.duration, () =>
-                {
-                    Object.Destroy(OldWeatherParticle.gameObject);
-                });
+                FadeOutParticle(OldWeatherParticle);
             }
 
             if (CurrentWeatherPreset.WeatherParticle)
@@ -82,11 +89,7 @@ namespace Watermelon
                 if (OldWeatherPreset != null && WeatherParticle != null)
                 {
                     OldWeatherParticle = WeatherParticle;
-                    OldWeatherParticle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                    Tween.DelayedCall(OldWeatherParticle.main.duration, () =>
-                    {
-                        Object.Destroy(OldWeatherParticle.gameObject);
-                    });
+                    FadeOutParticle(OldWeatherParticle);
                 }
             }
             else
@@ -94,11 +97,7 @@ namespace Watermelon
                 if (WeatherParticle != null)
                 {
                     OldWeatherParticle = WeatherParticle;
-                    OldWeatherParticle.Stop(true, ParticleSystemStopBehavior.StopEmitting);
-                    Tween.DelayedCall(OldWeatherParticle.main.duration, () =>
-                    {
-                        Object.Destroy(OldWeatherParticle.gameObject);
-                    });
+                    FadeOutParticle(OldWeatherParticle);
                 }
             }
 

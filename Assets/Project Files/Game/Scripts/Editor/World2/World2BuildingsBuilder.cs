@@ -62,7 +62,7 @@ namespace Watermelon.World2
             return prefab;
         }
 
-        private static void SetRecipe(ResourceConverterBuildingBehavior converter, CurrencyType result, params (CurrencyType type, int amount)[] components)
+        internal static void SetRecipe(ResourceConverterBuildingBehavior converter, CurrencyType result, params (CurrencyType type, int amount)[] components)
         {
             SerializedObject serialized = new SerializedObject(converter);
             SerializedProperty recipe = serialized.FindProperty("recipe");

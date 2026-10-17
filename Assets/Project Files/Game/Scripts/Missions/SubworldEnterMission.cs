@@ -29,6 +29,14 @@ namespace Watermelon
             StartMission();
 
             subworldEntrance.SubworldEntered += OnSubworldEnterTriggered;
+
+            // the entrance can open under the player while the previous mission is still finishing (the player stands on
+            // the tile that reveals it): already being inside counts as entering
+            Tween.DelayedCall(0.5f, () =>
+            {
+                if (missionStage == Stage.Active && WorldController.WorldBehavior != null && WorldController.WorldBehavior.SubworldHandler.ActiveSubworld == subworldEntrance.SubworldBehavior)
+                    OnSubworldEnterTriggered();
+            });
         }
 
         public override void Deactivate()
