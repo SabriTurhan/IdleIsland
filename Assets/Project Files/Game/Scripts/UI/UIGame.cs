@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Watermelon.GlobalUpgrades;
-using Watermelon.IAPStore;
+using IslandEscape.GlobalUpgrades;
+using IslandEscape.IAPStore;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class UIGame : UIPage
     {

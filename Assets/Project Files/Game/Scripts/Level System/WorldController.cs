@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class WorldController : MonoBehaviour
     {

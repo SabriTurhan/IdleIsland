@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RequireComponent(typeof(BoxCollider))]
     public class UIOpenerPointBehavior : MonoBehaviour

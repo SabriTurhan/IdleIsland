@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     /// <summary>
     /// Class that controlls dynamic direction pointer.

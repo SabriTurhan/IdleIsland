@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.UI;
-using Watermelon.AI;
+using IslandEscape.AI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class HelperBehavior : MonoBehaviour, INavMeshAgent, ICharacterGraphics<HelperGraphics>, IHitter, IResourceGiver, IWorldElement
     {

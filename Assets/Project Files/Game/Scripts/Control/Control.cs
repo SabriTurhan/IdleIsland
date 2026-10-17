@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [StaticUnload]
     public static class Control

@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class UIUpgrades : UIPage, IUpgradePanel
     {

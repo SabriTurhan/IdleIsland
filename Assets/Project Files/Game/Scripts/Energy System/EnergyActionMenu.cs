@@ -3,7 +3,7 @@ using UnityEngine;
 using UnityEditor;
 #endif
 
-namespace Watermelon
+namespace IslandEscape
 {
 
     public static class EnergyActionMenu

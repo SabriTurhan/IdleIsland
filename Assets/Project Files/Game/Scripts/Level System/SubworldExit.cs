@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RequireComponent(typeof(BoxCollider))]
     public class SubworldExit : MonoBehaviour, IGroundOpenable

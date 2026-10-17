@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using Watermelon.AI;
+using IslandEscape.AI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public sealed class GatheringTask : BaseTask
     {

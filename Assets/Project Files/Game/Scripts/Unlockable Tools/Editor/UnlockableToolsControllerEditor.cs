@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEditor;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomEditor(typeof(UnlockableToolsController))]
     public class UnlockableToolsControllerEditor : CustomInspector

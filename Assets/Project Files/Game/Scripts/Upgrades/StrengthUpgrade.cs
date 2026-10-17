@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Strength Upgrade", menuName = "Data/Upgrades/Strength Upgrade")]
     public class StrengthUpgrade : GlobalUpgrade<StrengthUpgrade.StrengthStage>

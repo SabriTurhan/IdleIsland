@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Watermelon.GlobalUpgrades
+namespace IslandEscape.GlobalUpgrades
 {
     public abstract class GlobalUpgrade<T> : AbstactGlobalUpgrade where T : GlobalUpgradeStage
     {

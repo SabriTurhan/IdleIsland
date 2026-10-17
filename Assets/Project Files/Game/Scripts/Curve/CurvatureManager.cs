@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.Rendering;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class CurvatureManager : MonoBehaviour
     {

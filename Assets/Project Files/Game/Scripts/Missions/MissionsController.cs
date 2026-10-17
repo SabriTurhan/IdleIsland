@@ -2,7 +2,7 @@
 
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class MissionsController : MonoBehaviour
     {

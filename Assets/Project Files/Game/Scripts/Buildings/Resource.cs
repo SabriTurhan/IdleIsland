@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [System.Serializable]
     public class ResourceListSave : ISaveObject

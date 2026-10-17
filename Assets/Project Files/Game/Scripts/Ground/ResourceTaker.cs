@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     /// <summary>
     /// The class that can be given resources and has the ability to display them on the world space UI

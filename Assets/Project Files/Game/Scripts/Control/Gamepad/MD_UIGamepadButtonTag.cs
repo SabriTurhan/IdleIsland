@@ -1,6 +1,6 @@
 using System;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [Flags]
     public enum UIGamepadButtonTag

@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public abstract class PauseItem : MonoBehaviour, IPointerClickHandler
     {

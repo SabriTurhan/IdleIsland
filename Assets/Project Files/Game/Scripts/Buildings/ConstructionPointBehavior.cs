@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomOverlayElement("Construction UI", "OnToggleValueChanged")]
     public class ConstructionPointBehavior : AbstractHitableBehavior, IDistanceToggle, IWorldElement

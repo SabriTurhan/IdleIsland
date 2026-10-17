@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // Boss of World 2: a giant ghost skeleton. Melee like a skeleton, plus a telegraphed ground slam
     // and pirate skeleton summons at 66% and 33% health.

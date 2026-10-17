@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     /// <summary>
     /// Marks the class that can take resources in order to unlock another object marked as 'IPurchasable'

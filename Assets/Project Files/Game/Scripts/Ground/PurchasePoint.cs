@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     /// <summary>
     /// This class' purpose is to let the player buy objects in the game world with resources

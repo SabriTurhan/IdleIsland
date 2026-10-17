@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public sealed class BuildingMission : Mission, IUnlockingMission
     {

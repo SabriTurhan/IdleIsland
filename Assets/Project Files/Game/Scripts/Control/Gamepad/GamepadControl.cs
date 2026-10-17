@@ -9,7 +9,7 @@ using UnityEngine.InputSystem;
 using UnityEngine.UI;
 #endif
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class GamepadControl : MonoBehaviour, IControlBehavior
     {

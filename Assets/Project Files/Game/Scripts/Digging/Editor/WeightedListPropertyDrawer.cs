@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomPropertyDrawer(typeof(WeightedList<>), true)]
     public class WeightedListPropertyDrawer : UnityEditor.PropertyDrawer

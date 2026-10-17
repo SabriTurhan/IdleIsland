@@ -2,7 +2,7 @@ using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Watermelon.IAPStore
+namespace IslandEscape.IAPStore
 {
     public class UIStore : UIPage
     {

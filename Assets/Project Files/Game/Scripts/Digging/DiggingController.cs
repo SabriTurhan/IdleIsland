@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class DiggingController : MonoBehaviour
     {

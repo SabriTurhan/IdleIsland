@@ -6,7 +6,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class UnlockCanvas : MonoBehaviour
     {

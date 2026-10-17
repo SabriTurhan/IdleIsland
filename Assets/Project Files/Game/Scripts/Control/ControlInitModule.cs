@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RegisterModule("Control Manager")]
     public class ControlInitModule : InitModule

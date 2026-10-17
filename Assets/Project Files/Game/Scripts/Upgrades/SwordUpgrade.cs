@@ -1,7 +1,7 @@
 using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // Sword level bought at the World 2 blacksmith: damage of every player hit on enemies
     [CreateAssetMenu(fileName = "Sword Upgrade", menuName = "Data/Upgrades/Sword Upgrade")]

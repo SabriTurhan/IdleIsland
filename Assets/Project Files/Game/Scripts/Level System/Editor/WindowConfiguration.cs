@@ -1,7 +1,7 @@
 ﻿#pragma warning disable 649
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [System.Serializable] // this is needed to survive acembly reload;
     public sealed class WindowConfiguration

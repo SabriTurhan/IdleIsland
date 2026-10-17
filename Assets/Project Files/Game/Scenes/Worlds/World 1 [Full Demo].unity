@@ -45106,7 +45106,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 574051418}
-        m_TargetAssemblyTypeName: Watermelon.FishingPlaceBehavior, Assembly-CSharp
+        m_TargetAssemblyTypeName: IslandEscape.FishingPlaceBehavior, Assembly-CSharp
         m_MethodName: ForceSpawn
         m_Mode: 1
         m_Arguments:

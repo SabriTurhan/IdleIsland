@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using Watermelon.AI;
+using IslandEscape.AI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public sealed class ConstructionTask : BaseTask
     {

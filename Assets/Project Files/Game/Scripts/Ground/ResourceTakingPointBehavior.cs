@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     /// <summary>
     /// This class is taking resources from the player when the player is inside the trigger, 

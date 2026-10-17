@@ -1,7 +1,7 @@
 ﻿using TMPro;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class InventoryUIPanel : MonoBehaviour
     {

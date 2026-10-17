@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.Events;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class Mission : MonoBehaviour
     {

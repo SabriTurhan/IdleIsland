@@ -11,7 +11,7 @@ MonoBehaviour:
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 86ae66a18234a40a7991541392f22721, type: 3}
   m_Name: Sword Upgrade
-  m_EditorClassIdentifier: Assembly-CSharp::Watermelon.SwordUpgrade
+  m_EditorClassIdentifier: Assembly-CSharp::IslandEscape.SwordUpgrade
   globalUpgradeType: 4
   title: Sword
   icon: {fileID: 21300000, guid: 70d9e701cf08249f087d3c73d23e38d0, type: 3}

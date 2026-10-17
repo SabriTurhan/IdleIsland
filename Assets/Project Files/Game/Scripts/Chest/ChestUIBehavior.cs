@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RequireComponent(typeof(Canvas), typeof(CanvasGroup))]
     public class ChestUIBehavior : MonoBehaviour, IGamepadInteraction

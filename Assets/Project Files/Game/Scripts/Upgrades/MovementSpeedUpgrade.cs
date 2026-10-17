@@ -1,10 +1,10 @@
 ﻿using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 using System;
 using UnityEditor;
 using System.Globalization;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Movement Speed Upgrade", menuName = "Data/Upgrades/Movement Speed Upgrade")]
     public class MovementSpeedUpgrade : GlobalUpgrade<MovementSpeedUpgrade.MovementSpeedStage>

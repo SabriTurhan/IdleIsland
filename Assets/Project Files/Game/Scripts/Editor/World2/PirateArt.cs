@@ -3,7 +3,7 @@ using System.IO;
 using UnityEditor;
 using UnityEngine;
 
-namespace Watermelon.World2
+namespace IslandEscape.World2
 {
     // Palette bands of pirate_tex.png: every band is a horizontal strip, light (left) -> dark (right).
     // Colours follow the game's palette (soft gradients, light at the top of a model).
@@ -129,7 +129,7 @@ namespace Watermelon.World2
             return AssetDatabase.LoadAssetAtPath<Texture2D>(ATLAS_PATH);
         }
 
-        // copies the buildings material (WMelon/Universal: toon, rim, curve, weather) and swaps the texture
+        // copies the buildings material (IslandEscape/Universal: toon, rim, curve, weather) and swaps the texture
         public static Material BuildMaterials()
         {
             Texture2D atlas = AssetDatabase.LoadAssetAtPath<Texture2D>(ATLAS_PATH) ?? BuildAtlas();

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Serialization;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class ResourceSourceBehavior : AbstractHitableBehavior, IGroundOpenable, IWorldElement
     {

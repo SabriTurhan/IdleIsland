@@ -9,7 +9,7 @@ using UnityEditor;
 #endif
 using System.Reflection;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class ControllOverlayTilesDimensionSettings : SceneOverlayCustomControl
     {

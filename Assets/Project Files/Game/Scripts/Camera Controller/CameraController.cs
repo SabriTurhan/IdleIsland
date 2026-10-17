@@ -4,7 +4,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [DefaultExecutionOrder(100)]
     public sealed class CameraController : MonoBehaviour, ISceneSavingCallback

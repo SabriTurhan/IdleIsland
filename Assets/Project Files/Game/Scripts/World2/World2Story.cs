@@ -3,7 +3,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // Story beats of World 2 (Pirate Cove):
     // - arrival: the raft is caught by a storm at sea, a wave throws the player onto the beach (plays once)

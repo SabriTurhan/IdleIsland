@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class CharacterGraphicsHolder<T> where T : MonoBehaviour
     {

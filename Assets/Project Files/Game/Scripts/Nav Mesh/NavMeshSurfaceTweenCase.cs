@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Unity.AI.Navigation;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class NavMeshSurfaceTweenCase : TweenCase
     {

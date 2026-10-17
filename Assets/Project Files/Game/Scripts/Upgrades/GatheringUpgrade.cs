@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 using System;
 using UnityEditor;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Gathering Upgrade", menuName = "Data/Upgrades/Gathering Upgrade")]
     public class GatheringUpgrade : GlobalUpgrade<GatheringUpgrade.GatheringUpgradeStage>

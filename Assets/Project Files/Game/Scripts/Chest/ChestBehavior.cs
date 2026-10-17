@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RequireComponent(typeof(BoxCollider))]
     public sealed class ChestBehavior : MonoBehaviour, IDistanceToggle, IWorldElement, IHitable, IGroundOpenable

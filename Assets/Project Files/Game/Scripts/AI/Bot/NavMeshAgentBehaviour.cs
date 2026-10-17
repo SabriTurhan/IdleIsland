@@ -2,9 +2,9 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
-using Watermelon.AI;
+using IslandEscape.AI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class NavMeshAgentBehaviour
     {

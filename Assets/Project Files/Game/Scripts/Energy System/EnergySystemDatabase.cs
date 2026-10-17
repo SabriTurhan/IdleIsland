@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Serialization;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Energy System Database", menuName = "Data/Energy System Database")]
     public class EnergySystemDatabase : ScriptableObject

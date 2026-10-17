@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [System.Serializable]
     public class CameraLocalData

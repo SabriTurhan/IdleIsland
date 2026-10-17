@@ -5,7 +5,7 @@ using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomEditor(typeof(GroundTileComplexBehavior), true)]
     public class GroundTileComplexBehaviourEditor : CustomInspector

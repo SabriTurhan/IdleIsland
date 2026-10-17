@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [HideScriptField]
     public abstract class AbstractComplexBehavior<T, K> : MonoBehaviour, IUnlockableComplex where T : IUnlockable where K : IPurchaser

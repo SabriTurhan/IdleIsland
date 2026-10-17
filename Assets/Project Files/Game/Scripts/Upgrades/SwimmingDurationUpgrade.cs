@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Swimming Duration Upgrade", menuName = "Data/Upgrades/Swimming Duration Upgrade")]
     public class SwimmingDurationUpgrade : GlobalUpgrade<SwimmingDurationUpgrade.DurationStage>

@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Watermelon.World2
+namespace IslandEscape.World2
 {
     // World 2 enemies built from the template skeleton (same rig and animations) + the sword upgrade
     public static class World2EnemiesBuilder
@@ -51,7 +51,7 @@ namespace Watermelon.World2
             },
             new EnemyDefinition
             {
-                Type = EnemyType.GhostCaptain, Name = "Ghost Captain", Boss = true, Health = 80, Damage = 9, AttackRange = 2.0f, Speed = 1.7f, Scale = 2f,
+                Type = EnemyType.GhostCaptain, Name = "Ghost Captain", Boss = true, Health = 60, Damage = 6, AttackRange = 2.0f, Speed = 1.7f, Scale = 2f,
                 Detection = 11f, Leash = 30f, Coins = 300, Tint = new Color(0.55f, 1f, 0.95f), Emission = new Color(0.12f, 0.45f, 0.42f),
                 HeadAccessories = new System.Func<Mesh>[] { PirateModels.TricornHat, PirateModels.GhostBeard, PirateModels.GlowingEyes }, Cutlass = true,
             },

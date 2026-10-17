@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class WorldObjectAttribute : Attribute
     {

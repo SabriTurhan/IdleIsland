@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Interaction Data", menuName = "Data/Interaction Data")]
     public class InteractionData : ScriptableObject

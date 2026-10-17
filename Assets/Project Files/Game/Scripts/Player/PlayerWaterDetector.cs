@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class PlayerWaterDetector : MonoBehaviour
     {

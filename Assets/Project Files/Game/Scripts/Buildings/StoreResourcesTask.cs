@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
-using Watermelon.AI;
+using IslandEscape.AI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public sealed class StoreResourcesTask : BaseTask
     {

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomOverlayElement("Ground locked/unlocked", "OnToggleValueChanged")]
     public class GroundTileComplexBehavior : AbstractComplexBehavior<GroundTileBehavior, PurchasePoint> 

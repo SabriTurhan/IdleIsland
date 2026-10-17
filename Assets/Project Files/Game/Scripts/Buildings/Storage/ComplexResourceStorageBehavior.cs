@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     /// <summary>
     /// The purpose of this class is to take resources (including physically from the player), store them and give them away (also could be physically to the player)

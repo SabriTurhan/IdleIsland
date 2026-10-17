@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RequireComponent(typeof(Animator))]
     public sealed class WorldChangeRaftBehavior : WorldChangeSpecialBehavior

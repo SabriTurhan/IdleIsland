@@ -3,7 +3,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [InitializeOnLoad]
     public static class SceneAutoLoaded

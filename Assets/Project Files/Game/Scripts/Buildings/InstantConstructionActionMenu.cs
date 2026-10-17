@@ -7,7 +7,7 @@ using UnityEditor;
 #endif
 
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class InstantConstructionActionMenu : MonoBehaviour
     {

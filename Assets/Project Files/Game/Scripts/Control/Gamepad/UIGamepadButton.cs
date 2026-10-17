@@ -6,7 +6,7 @@ using UnityEngine.EventSystems;
 using UnityEngine.InputSystem;
 #endif
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RequireComponent(typeof(Button))]
     public class UIGamepadButton : MonoBehaviour

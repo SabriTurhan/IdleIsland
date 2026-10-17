@@ -7,7 +7,7 @@ using UnityEditor.iOS.Xcode;
 using System.IO;
 using System.Collections.Generic;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public static class IOSBuildPostProcessor
     {

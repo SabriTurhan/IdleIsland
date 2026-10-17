@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     /// <summary>
     /// This is an implementation of a finite state machine (FSM) in Unity using generics, where the state machine can be used for any type of Enum.

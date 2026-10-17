@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [AttributeUsage(AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
     public class CustomOverlayElementAttribute : Attribute

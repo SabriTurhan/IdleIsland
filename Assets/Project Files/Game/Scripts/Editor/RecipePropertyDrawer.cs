@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEditorInternal;
 using System;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomPropertyDrawer(typeof(Recipe))]
     public class RecipePropertyDrawer : UnityEditor.PropertyDrawer

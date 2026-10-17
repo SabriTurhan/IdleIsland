@@ -1,9 +1,9 @@
 using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 using System;
 using UnityEditor;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Capacity Upgrade", menuName = "Data/Upgrades/Capacity Upgrade")]
     public class CapacityUpgrade : GlobalUpgrade<CapacityUpgrade.CapacityUpgradeStage>

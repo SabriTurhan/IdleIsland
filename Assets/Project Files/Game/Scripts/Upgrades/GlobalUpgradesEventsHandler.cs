@@ -1,6 +1,6 @@
-﻿using Watermelon.GlobalUpgrades;
+﻿using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public static class GlobalUpgradesEventsHandler
     {

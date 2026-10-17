@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Resource Drop Animation", menuName = "Data/Resource Drop Animation")]
     public class DropAnimation : ScriptableObject

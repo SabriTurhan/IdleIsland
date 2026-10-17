@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // Defeat N enemies (of one type, or any type) after the mission starts
     public sealed class KillEnemiesMission : Mission

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon.Enemy.Skeleton
+namespace IslandEscape.Enemy.Skeleton
 {
     public class SkeletonIdleState: StateBehavior<SkeletonEnemyBehavior>
     {

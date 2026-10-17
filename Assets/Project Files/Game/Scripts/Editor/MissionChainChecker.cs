@@ -3,9 +3,9 @@ using System.Reflection;
 using System.Text;
 using UnityEditor;
 using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // QA helper: walks the mission chain in play mode and checks that every mission target
     // is visible and usable at the moment the mission starts (softlock detection).

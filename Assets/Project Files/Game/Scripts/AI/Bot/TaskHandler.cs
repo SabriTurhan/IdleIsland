@@ -2,7 +2,7 @@
 using System.Linq;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class TaskHandler
     {

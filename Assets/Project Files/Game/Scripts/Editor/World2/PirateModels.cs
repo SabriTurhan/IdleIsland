@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Watermelon.World2
+namespace IslandEscape.World2
 {
     // Low-poly models of World 2 (Pirate Cove). Sizes follow the template: pickables ~0.4-0.8 units.
     public static class PirateModels

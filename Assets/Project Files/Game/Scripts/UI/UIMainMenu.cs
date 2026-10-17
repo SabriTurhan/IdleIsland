@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class UIMainMenu : UIPage
     {

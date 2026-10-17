@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.AI.Navigation;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public static class NavMeshController
     {

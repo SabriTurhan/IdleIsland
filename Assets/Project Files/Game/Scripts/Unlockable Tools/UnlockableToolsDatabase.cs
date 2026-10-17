@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Unlockable Tools Database", menuName = "Data/Unlockable Tools")]
     public class UnlockableToolsDatabase : ScriptableObject

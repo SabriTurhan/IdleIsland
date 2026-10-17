@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Watermelon.GlobalUpgrades
+namespace IslandEscape.GlobalUpgrades
 {
     public abstract class AbstactGlobalUpgrade : ScriptableObject, IUpgrade
     {

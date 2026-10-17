@@ -1,4 +1,4 @@
-﻿namespace Watermelon
+﻿namespace IslandEscape
 {
     public interface IUnlockingMission
     {

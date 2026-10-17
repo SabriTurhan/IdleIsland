@@ -1,12 +1,12 @@
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.AI;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class PlayerBehavior : MonoBehaviour, ICharacter, ICharacterGraphics<PlayerGraphics>, IResourceGiver, IResourceTaker, IHitter
     {
@@ -726,11 +726,15 @@ namespace Watermelon
 
                 Overlay.Show(2.0f, () =>
                 {
+                    // dying inside a sub-world (the boss crypt, the cave) respawns at its door, not across the island
+                    Transform exitPoint = WorldController.WorldBehavior.SubworldHandler.ActiveSubworldExitPoint;
+                    Vector3 respawnPosition = exitPoint != null ? exitPoint.position : WorldController.WorldBehavior.SpawnPoint.position;
+
                     WorldController.WorldBehavior.SubworldHandler.DisableSubworld();
 
                     gameObject.SetActive(false);
 
-                    agent.Warp(WorldController.WorldBehavior.SpawnPoint.position);
+                    agent.Warp(respawnPosition);
 
                     StopHittingAnimation();
                     hitableObjectsInRange.Clear();

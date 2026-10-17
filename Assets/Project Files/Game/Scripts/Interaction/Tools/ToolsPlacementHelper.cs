@@ -9,7 +9,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 #endif
 
-namespace Watermelon
+namespace IslandEscape
 {
     [ExecuteInEditMode]
     public class ToolsPlacementHelper : MonoBehaviour

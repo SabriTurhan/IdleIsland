@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public abstract class BaseWorldBehavior : MonoBehaviour, ISceneSavingCallback
     {

@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEditor;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomPropertyDrawer(typeof(MissionPickerAttribute))]
     public class MissionPickerPropertyDrawer : PropertyDrawer

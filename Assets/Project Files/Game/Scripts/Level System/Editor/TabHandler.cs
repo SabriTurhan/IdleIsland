@@ -5,7 +5,7 @@ using System.Collections.Generic;
 using UnityEditor;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class TabHandler
     {

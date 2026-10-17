@@ -5,7 +5,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class ResourcesCanvas : ResourceCanvas
     {

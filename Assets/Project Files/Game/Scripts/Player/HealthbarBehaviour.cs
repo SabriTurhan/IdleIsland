@@ -1,10 +1,10 @@
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
-using Watermelon;
+using IslandEscape;
 using System.Collections.Generic;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class HealthbarBehaviour : MonoBehaviour
     {

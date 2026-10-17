@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Gamepad Data", menuName = "Data/Core/Gamepad Data")]
     public class GamepadData : ScriptableObject

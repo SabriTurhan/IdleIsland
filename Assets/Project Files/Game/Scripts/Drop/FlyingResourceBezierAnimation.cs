@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Flying Resource Bezier Animation", menuName = "Data/Flying Resource/Flying Resource Bezier Animation")]
     public class FlyingResourceBezierAnimation : FlyingResourceAnimation

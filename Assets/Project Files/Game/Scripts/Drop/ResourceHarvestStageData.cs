@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Resource Harvest Stage Data", menuName = "Data/Resource Harvest Stage Data")]
     public class ResourceHarvestStageData : ScriptableObject

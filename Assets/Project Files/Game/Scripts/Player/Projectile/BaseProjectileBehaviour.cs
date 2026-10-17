@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Watermelon;
+using IslandEscape;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public abstract class BaseProjectileBehaviour : MonoBehaviour
     {

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class StateBehavior<T> : IStateBehavior where T : MonoBehaviour
     {

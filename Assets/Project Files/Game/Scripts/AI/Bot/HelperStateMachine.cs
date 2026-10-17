@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon.AI
+namespace IslandEscape.AI
 {
     public class HelperStateMachine : AbstractStateMachine<HelperStateMachine.State>
     {

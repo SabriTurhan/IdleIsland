@@ -4,7 +4,7 @@ using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomEditor(typeof(DropAnimation))]
     public class DropAnimationEditor : CustomInspector

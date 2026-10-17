@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public static class HelperCreator
     {

@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEditor;
 using System;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomEditor(typeof(BuildingBehavior), true)]
     public class BuildingBehaviourEditor : CustomInspector

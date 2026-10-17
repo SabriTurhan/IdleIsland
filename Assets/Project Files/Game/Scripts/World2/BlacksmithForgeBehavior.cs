@@ -1,6 +1,6 @@
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // Forge of World 2: smelts iron like any converter, and its upgrade button also sells sword levels
     public class BlacksmithForgeBehavior : ResourceConverterBuildingBehavior

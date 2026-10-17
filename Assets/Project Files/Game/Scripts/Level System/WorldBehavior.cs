@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomOverlayElement("Update Prices UI", "OnUpdatePricesButtonClick")]
     public class WorldBehavior : BaseWorldBehavior

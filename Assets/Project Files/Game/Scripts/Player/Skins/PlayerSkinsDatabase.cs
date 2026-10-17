@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Player Skins Database", menuName = "Data/Player Skins Database")]
     public class PlayerSkinsDatabase : GenericSkinDatabase<PlayerSkinData>

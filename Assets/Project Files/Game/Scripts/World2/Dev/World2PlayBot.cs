@@ -5,9 +5,9 @@ using System.IO;
 using System.Text;
 using UnityEngine;
 using UnityEngine.AI;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // Development only: plays World 2 like a player would (walks on the navmesh, harvests, carries resources to
     // converters and purchase points, hammers construction sites, fights, dodges the boss) and logs every problem.
@@ -194,7 +194,7 @@ namespace Watermelon
             }
 
             NavMeshPath path = new NavMeshPath();
-            NavMesh.CalculatePath(player.transform.position, end.position, NavMesh.AllAreas, path);
+            NavMesh.CalculatePath(player.transform.position, end.position, LandFirst(), path);
             if (path.status != NavMeshPathStatus.PathComplete)
             {
                 Issue($"no complete path to {what} ({path.status}) from {player.transform.position:F0} to {target:F0}");
@@ -230,6 +230,14 @@ namespace Watermelon
 
                 yield return null;
             }
+        }
+
+        // swimming drains energy and drowns: like a player, walk around over land (bridges, ramps) when there is a way
+        private NavMeshQueryFilter LandFirst()
+        {
+            NavMeshQueryFilter filter = new NavMeshQueryFilter { areaMask = NavMesh.AllAreas, agentTypeID = agent.agentTypeID };
+            filter.SetAreaCost(3, 25f); // water
+            return filter;
         }
 
         private IEnumerator Wait(float seconds)
@@ -543,6 +551,13 @@ namespace Watermelon
                     continue;
                 }
 
+                // the captain lives in the crypt: never look for him across the sea
+                if (boss && !WorldController.WorldBehavior.SubworldHandler.IsSubworldActive)
+                {
+                    yield return EnterCrypt();
+                    continue;
+                }
+
                 if (boss && DodgeSlam()) { yield return null; continue; }
 
                 BaseEnemyBehavior enemy = FindEnemy(mission);
@@ -609,6 +624,16 @@ namespace Watermelon
 
         private BaseEnemyBehavior FindEnemy(KillEnemiesMission mission)
         {
+            // against the captain, clear his summoned skeletons first (they keep the player from healing)
+            if (!mission.AnyEnemyType && mission.EnemyType == EnemyType.GhostCaptain)
+            {
+                foreach (BaseEnemyBehavior enemy in FindObjectsByType<BaseEnemyBehavior>(FindObjectsSortMode.None))
+                {
+                    if (enemy.IsDead || !enemy.gameObject.activeInHierarchy || enemy is GhostCaptainBehavior) continue;
+                    if ((enemy.transform.position - player.transform.position).sqrMagnitude < 64f) return enemy;
+                }
+            }
+
             BaseEnemyBehavior best = null;
             float bestDistance = 400f;
             foreach (BaseEnemyBehavior enemy in FindObjectsByType<BaseEnemyBehavior>(FindObjectsSortMode.None))

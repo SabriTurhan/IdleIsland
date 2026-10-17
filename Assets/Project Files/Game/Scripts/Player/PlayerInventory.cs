@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [System.Serializable]
     public class PlayerInventory

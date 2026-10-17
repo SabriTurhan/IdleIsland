@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RequireComponent(typeof(SphereCollider))]
     public class PlayerResourcesTrigger : MonoBehaviour

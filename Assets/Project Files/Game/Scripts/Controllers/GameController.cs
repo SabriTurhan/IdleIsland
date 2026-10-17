@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [DefaultExecutionOrder(-10)]
     public class GameController : MonoBehaviour

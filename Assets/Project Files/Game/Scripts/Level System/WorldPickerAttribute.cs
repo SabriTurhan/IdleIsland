@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
     public class WorldPickerAttribute : PropertyAttribute

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Environment Presets Database", menuName = "Data/Weather/Environment Presets Database")]
     public class EnvironmentPresetsDatabase : ScriptableObject

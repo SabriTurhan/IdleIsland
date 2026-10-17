@@ -5,7 +5,7 @@ using UnityEditor.SceneManagement;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Watermelon.World2
+namespace IslandEscape.World2
 {
     // Renders resource icons in the style of Images/Drop/ic_*.png: soft 3D render, thick dark outline, no background.
     public class PirateIconRenderer : IDisposable

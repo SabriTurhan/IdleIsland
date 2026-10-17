@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Worlds Database", menuName = "Data/Worlds Database")]
     public class WorldsDatabase : ScriptableObject

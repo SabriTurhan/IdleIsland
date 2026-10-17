@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Watermelon.GlobalUpgrades
+namespace IslandEscape.GlobalUpgrades
 {
     [CreateAssetMenu(fileName = "Upgrades Database", menuName = "Data/Upgrades/Upgrades Database")]
     public class GlobalUpgradesDatabase : ScriptableObject

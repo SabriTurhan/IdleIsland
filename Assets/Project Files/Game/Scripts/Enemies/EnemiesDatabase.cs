@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CreateAssetMenu(fileName = "Enemies Database", menuName = "Data/Enemies Database")]
     public class EnemiesDatabase : ScriptableObject

@@ -1,9 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Watermelon.Enemy.Skeleton;
+using IslandEscape.Enemy.Skeleton;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class SkeletonStateMachine : AbstractStateMachine<SkeletonStateMachine.State>
     {

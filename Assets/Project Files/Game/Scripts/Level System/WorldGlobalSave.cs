@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [System.Serializable]
     public class WorldGlobalSave : ISaveObject

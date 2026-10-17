@@ -1,7 +1,7 @@
 ﻿using System.Linq;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [System.Serializable]
     public class SubworldHandler
@@ -16,6 +16,9 @@ namespace Watermelon
         public SubworldBehavior ActiveSubworld => activeSubworld;
 
         public bool IsSubworldActive => activeSubworld != null;
+
+        // where the player stands after leaving the active sub-world (outside its door)
+        public Transform ActiveSubworldExitPoint => activeSubworld != null && lastSubworldEntrance != null ? lastSubworldEntrance.ExitSpawnPoint : null;
 
         public event SimpleCallback OnSubworldEnetered;
         public event SimpleCallback OnSubworldLeft;

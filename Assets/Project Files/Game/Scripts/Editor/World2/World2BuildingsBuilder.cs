@@ -3,7 +3,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.AI;
 
-namespace Watermelon.World2
+namespace IslandEscape.World2
 {
     // World 2 buildings made from the template buildings (same purchase/construction/converter logic, new visuals)
     public static class World2BuildingsBuilder

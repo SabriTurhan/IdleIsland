@@ -1,8 +1,8 @@
 using System.Collections.Generic;
 using UnityEngine;
-using Watermelon.GlobalUpgrades;
+using IslandEscape.GlobalUpgrades;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public abstract class BuildingBehavior : MonoBehaviour, IUnlockable, IWorldElement
     {

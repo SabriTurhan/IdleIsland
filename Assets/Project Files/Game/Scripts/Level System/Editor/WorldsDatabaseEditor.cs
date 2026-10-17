@@ -1,6 +1,6 @@
 using UnityEditor;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [CustomEditor(typeof(WorldsDatabase))]
     public class WorldsDatabaseEditor : CustomInspector

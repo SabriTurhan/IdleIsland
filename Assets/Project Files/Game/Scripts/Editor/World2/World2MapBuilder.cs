@@ -4,7 +4,7 @@ using UnityEditor;
 using UnityEditor.SceneManagement;
 using UnityEngine;
 
-namespace Watermelon.World2
+namespace IslandEscape.World2
 {
     // Builds "World 2 Pirate Cove" from a copy of World 1 (keeps the world systems, tent and cave sub-worlds)
     // and a text map with 5 unit cells. Re-runnable: everything generated is removed and placed again.
@@ -1035,7 +1035,10 @@ namespace Watermelon.World2
             if (context.ShipZone != null) Set(context.ShipZone, "worldIndex", -1);
 
             // story: storm arrival cinematic and the ending
-            World2Story story = context.World.GetComponent<World2Story>() ?? context.World.gameObject.AddComponent<World2Story>();
+            // recreated on every build (all its references are set below), so it never keeps stale serialized data
+            World2Story oldStory = context.World.GetComponent<World2Story>();
+            if (oldStory != null) Object.DestroyImmediate(oldStory);
+            World2Story story = context.World.gameObject.AddComponent<World2Story>();
             Transform endingPoint = context.World.Find("Ending Respawn Point") ?? new GameObject("Ending Respawn Point").transform;
             endingPoint.SetParent(context.World, false);
             endingPoint.position = CellPosition(3, 5) + new Vector3(0, 0, -1.5f);

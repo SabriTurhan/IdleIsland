@@ -1,7 +1,7 @@
 using Unity.AI.Navigation;
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     [RequireComponent(typeof(NavMeshSurface))]
     public class SubworldBehavior : BaseWorldBehavior

@@ -2,7 +2,7 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // Spawns the Ghost Captain when the player walks into the crypt, shows the boss bar, remembers the victory
     public class BossArena : MonoBehaviour

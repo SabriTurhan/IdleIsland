@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace Watermelon
+namespace IslandEscape
 {
     public abstract class SceneOverlayCustomControl
     {

@@ -5,7 +5,7 @@ using UnityEditor;
 using UnityEngine;
 using UnityEngine.TextCore;
 
-namespace Watermelon.World2
+namespace IslandEscape.World2
 {
     // Builds the new World 2 resources: models, pickable/flying prefabs, the Iron Ore rock, icons,
     // currency database entries and the TMP sprite atlas used by "<sprite name=...>" texts.

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace Watermelon
+namespace IslandEscape
 {
     // Have at least N of a currency at the same time (e.g. all 4 map pieces), items owned before the start count too
     public sealed class OwnCurrencyMission : Mission

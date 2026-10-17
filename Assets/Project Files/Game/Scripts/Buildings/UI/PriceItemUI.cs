@@ -6,7 +6,7 @@ using UnityEngine.UI;
 using UnityEditor;
 #endif
 
-namespace Watermelon
+namespace IslandEscape
 {
     public class PriceItemUI : MonoBehaviour
     {

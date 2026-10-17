@@ -44,7 +44,7 @@ Oyun içi metinler İngilizce (oyunun geri kalanıyla uyumlu), bu belge Türkçe
 
 - **Kılıç seviyesi** (yeni global geliştirme, Demirci'de, **altınla**): hasar 1 → 2 → 3 → 5 → 8. Dünya 1 iskeletleri aynen kalır (5 can, 1 hasar).
 - **Pirate Skeleton**: 8 can, 8 hasar. **Skeleton Brute**: 24 can, 14 hasar, yavaş, büyük.
-- **Ghost Captain (boss)**: 80 can, yakın vuruş 9, telgraf edilen alan darbesi 20 (kaçılabilir), %66 ve %33 canda 2 iskelet çağırır. Can barı ekranda.
+- **Ghost Captain (boss)**: 60 can, yakın vuruş 6, telgraf edilen alan darbesi 20 (kaçılabilir), %66 ve %33 canda 2 iskelet çağırır. Can barı ekranda.
 
 ## Ekonomi
 
