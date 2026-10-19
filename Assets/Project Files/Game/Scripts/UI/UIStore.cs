@@ -1,4 +1,4 @@
-using System.Linq;
+﻿using System.Linq;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -72,6 +72,13 @@ namespace IslandEscape.IAPStore
 
             content.sizeDelta = new Vector2(0, height);
             content.anchoredPosition = Vector2.zero;
+
+            // no offer can be active (Yandex Games without products): open right away
+            if (appearTweenCases.Length == 0)
+            {
+                UIController.OnPageOpened(this);
+                return;
+            }
 
             appearTweenCases[^1].OnComplete(() =>
             {

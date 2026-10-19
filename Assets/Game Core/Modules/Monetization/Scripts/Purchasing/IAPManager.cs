@@ -179,6 +179,9 @@ namespace IslandEscape
 
         private static IAPWrapper GetPlatformWrapper()
         {
+#if UNITY_WEBGL && !UNITY_EDITOR
+            if (YandexGames.IsAvailable) return new YandexIAPWrapper();
+#endif
 #if MODULE_IAP
             return new UnityIAPWrapper();
 #else

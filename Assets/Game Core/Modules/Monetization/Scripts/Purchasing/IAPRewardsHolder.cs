@@ -47,6 +47,16 @@ namespace IslandEscape
             // To acess Unity IAP product use product.Product property
             product = IAPManager.GetProductData(productKey);
 
+            // Yandex Games: products that aren't active in the console must not be offered
+            if (product == null)
+            {
+                gameObject.SetActive(false);
+                return;
+            }
+
+            // purchases from an earlier session that were not granted yet
+            while (YandexIAPWrapper.ClaimPending(productKey, () => OnPurchaseComplete(productKey))) { }
+
             // Update button state
             // If there is problem with the internet connection or server didn't return product data loading animation appeared
             purchaseButton.UpdateState(product);

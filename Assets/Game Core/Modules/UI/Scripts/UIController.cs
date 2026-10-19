@@ -75,6 +75,22 @@ namespace IslandEscape
             Overlay.Init(this);
         }
 
+        private int lastScreenWidth;
+        private int lastScreenHeight;
+
+        // the browser window can be resized and phones rotated at any time: keep the UI scale matched to the
+        // current shape (narrow screens fit the width, wider ones the height), not only the one at launch
+        private void LateUpdate()
+        {
+            if (CanvasScaler == null || (Screen.width == lastScreenWidth && Screen.height == lastScreenHeight)) return;
+
+            lastScreenWidth = Screen.width;
+            lastScreenHeight = Screen.height;
+
+            isTablet = Screen.height > 0 && (float)Screen.width / Screen.height > 9f / 16f;
+            CanvasScaler.matchWidthOrHeight = isTablet ? 1 : 0;
+        }
+
         public void InitPages()
         {
             // Refresh notch save area
@@ -165,6 +181,22 @@ namespace IslandEscape
             }
 
             return false;
+        }
+
+        /// <summary>True when T is the only page on screen (no menu, store or upgrades page over the game).</summary>
+        public static bool IsOnlyPageDisplayed<T>() where T : UIPage
+        {
+            if (pages == null) return false;
+
+            bool found = false;
+            foreach (UIPage page in pages)
+            {
+                if (page == null || !page.IsPageDisplayed) continue;
+                if (page is T) found = true;
+                else return false;
+            }
+
+            return found;
         }
 
         public static void OnPageClosed(UIPage page)

@@ -790,6 +790,7 @@ namespace IslandEscape
             return new AdProviderHandler[]
             {
                 new AdDummyHandler(AdProvider.Dummy), 
+                new YandexAdHandler(AdProvider.Yandex),
 
 #if MODULE_ADMOB
                 new AdMobHandler(AdProvider.AdMob), 

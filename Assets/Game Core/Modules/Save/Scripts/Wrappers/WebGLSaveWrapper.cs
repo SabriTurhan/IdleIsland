@@ -18,6 +18,20 @@ namespace IslandEscape
         {
 #if UNITY_WEBGL && !UNITY_EDITOR
             string jsonObject = load(fileName);
+
+            // Yandex Games cloud save: the newer of the local and the server copy wins
+            YandexGames.CloudSave cloud = YandexGames.LoadCloud();
+            if (cloud != null)
+            {
+                double.TryParse(load(fileName + "_t"), System.Globalization.NumberStyles.Any, System.Globalization.CultureInfo.InvariantCulture, out double localTime);
+                if (string.IsNullOrEmpty(jsonObject) || cloud.t > localTime)
+                {
+                    jsonObject = cloud.save;
+                    save(fileName, jsonObject);
+                    save(fileName + "_t", cloud.t.ToString(System.Globalization.CultureInfo.InvariantCulture));
+                }
+            }
+
             if(!string.IsNullOrEmpty(jsonObject))
             {
                 try
@@ -42,6 +56,10 @@ namespace IslandEscape
             string jsonObject = JsonUtility.ToJson(globalSave);
 
             save(fileName, jsonObject);
+
+            double now = (System.DateTime.UtcNow - new System.DateTime(1970, 1, 1)).TotalMilliseconds;
+            save(fileName + "_t", now.ToString(System.Globalization.CultureInfo.InvariantCulture));
+            YandexGames.SaveCloud(jsonObject, now);
 #endif
         }
 

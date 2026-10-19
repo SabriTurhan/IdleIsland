@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 using UnityEngine.EventSystems;
+#if MODULE_INPUT_SYSTEM
+using UnityEngine.InputSystem;
+#endif
 using UnityEngine.UI;
 
 namespace IslandEscape
@@ -33,7 +36,10 @@ namespace IslandEscape
         private RectTransform handleRectTransform;
 
         private bool isActive;
-        public bool IsMovementInputNonZero => isActive;
+        public bool IsMovementInputNonZero => isActive || keyboardInput.sqrMagnitude > 0.01f;
+
+        // WASD / arrow keys also drive the joystick (web build on a computer: mouse drag or keyboard)
+        private Vector2 keyboardInput;
 
         private bool canDrag;
 
@@ -43,7 +49,7 @@ namespace IslandEscape
         protected Vector2 input = Vector2.zero;
 
         public Vector3 Input => input;
-        public Vector3 MovementInput => new Vector3(input.x, 0, input.y);
+        public Vector3 MovementInput => isActive ? new Vector3(input.x, 0, input.y) : new Vector3(keyboardInput.x, 0, keyboardInput.y);
 
         private Vector2 defaultAnchoredPosition;
 
@@ -112,6 +118,36 @@ namespace IslandEscape
             handleImage.color = handleDisableColor.SetAlpha(hideVisualsActive ? 0f : backgroundDisableColor.a);
 
             defaultAnchoredPosition = backgroundRectTransform.anchoredPosition;
+        }
+
+        private void Update()
+        {
+#if MODULE_INPUT_SYSTEM
+            Keyboard keyboard = Keyboard.current;
+            if (keyboard == null)
+            {
+                keyboardInput = Vector2.zero;
+                return;
+            }
+
+            float x = (keyboard.dKey.isPressed || keyboard.rightArrowKey.isPressed ? 1f : 0f) - (keyboard.aKey.isPressed || keyboard.leftArrowKey.isPressed ? 1f : 0f);
+            float y = (keyboard.wKey.isPressed || keyboard.upArrowKey.isPressed ? 1f : 0f) - (keyboard.sKey.isPressed || keyboard.downArrowKey.isPressed ? 1f : 0f);
+
+            bool wasMoving = keyboardInput.sqrMagnitude > 0.01f;
+            keyboardInput = Vector2.ClampMagnitude(new Vector2(x, y), 1f);
+
+            if (!wasMoving && !isActive && keyboardInput.sqrMagnitude > 0.01f)
+            {
+                if (!isTutorialDisplayed)
+                {
+                    isTutorialDisplayed = true;
+                    joystickAnimator.enabled = false;
+                    pointerGameObject.SetActive(false);
+                }
+
+                OnMovementInputActivated?.Invoke();
+            }
+#endif
         }
 
         public void OnPointerDown(PointerEventData eventData)
@@ -185,6 +221,7 @@ namespace IslandEscape
             backgroundRectTransform.anchoredPosition = defaultAnchoredPosition;
 
             input = Vector2.zero;
+            keyboardInput = Vector2.zero;
             handleRectTransform.anchoredPosition = Vector2.zero;
         }
 

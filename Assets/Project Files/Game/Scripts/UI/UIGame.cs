@@ -91,6 +91,9 @@ namespace IslandEscape
 
             UpdateInventoryUI();
 
+            // Yandex Games: the store is offered only when the console has active products
+            iapStoreButton.gameObject.SetActive(YandexStore.PurchasesOffered);
+
             UIController.OnPageOpened(this);
 
             UIGamepadButton.DisableAllTags();

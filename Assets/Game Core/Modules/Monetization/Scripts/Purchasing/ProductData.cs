@@ -40,8 +40,26 @@ namespace IslandEscape
             IsSubscribed = false;
         }
 
+        /// <summary>Platform price label (Yandex: amount + portal currency name).</summary>
+        public string PriceText { get; }
+        /// <summary>Icon of the platform currency (Yandex), shown next to the price.</summary>
+        public string CurrencyImageUrl { get; }
+
+        public ProductData(ProductType productType, decimal price, string currencyCode, bool isPurchased, string priceText, string currencyImageUrl)
+        {
+            ProductType = productType;
+            Price = price;
+            ISOCurrencyCode = currencyCode;
+            IsPurchased = isPurchased;
+            IsSubscribed = false;
+            PriceText = priceText;
+            CurrencyImageUrl = currencyImageUrl;
+        }
+
         public string GetLocalPrice()
         {
+            if (!string.IsNullOrEmpty(PriceText)) return PriceText;
+
             return string.Format("{0} {1}", ISOCurrencyCode, Price);
         }
 
