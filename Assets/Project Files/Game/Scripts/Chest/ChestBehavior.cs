@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 namespace IslandEscape
@@ -320,7 +320,8 @@ namespace IslandEscape
         {
             AdsManager.ShowRewardBasedVideo((reward) =>
             {
-                UnlockChest();
+                // only a fully watched ad opens the chest
+                if (reward) UnlockChest();
             });
         }
 

@@ -47,6 +47,16 @@ namespace IslandEscape
             MissionsController.OnNextMissionStarted -= OnNextMissionStarted;
         }
 
+        /// <summary>Language of the portal, read through the SDK (requirement 2.14). The game ships in English only.</summary>
+        public static string PortalLanguage { get; private set; } = "en";
+
+        private void Start()
+        {
+            string language = YandexGames.Language;
+            if (!string.IsNullOrEmpty(language)) PortalLanguage = language;
+            Debug.Log("[Yandex] portal language: " + PortalLanguage + " (game text: en)");
+        }
+
         private void OnLoadingFinished()
         {
             YandexGames.GameReady();

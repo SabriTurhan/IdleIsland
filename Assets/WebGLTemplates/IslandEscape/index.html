@@ -126,7 +126,9 @@
 
       // ---- Unity --------------------------------------------------------------------------------------
       var fill = document.getElementById("fill");
-      withTimeout(initYandex(), 8000).then(function () {
+      // the portal answers getPlayer (cloud save) and the catalog only once the player has pressed its Play
+      // button: wait for them before Unity starts, otherwise the save and the store load empty
+      withTimeout(initYandex(), 60000).then(function () {
         return createUnityInstance(document.querySelector("#unity-canvas"), {
           arguments: [],
           dataUrl: "Build/{{{ DATA_FILENAME }}}",

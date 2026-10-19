@@ -79,6 +79,8 @@ namespace IslandEscape
 #if UNITY_WEBGL && !UNITY_EDITOR
             if (IsAvailable) YG_Ready();
 #endif
+            // gameplay markup only starts after ready
+            UpdateGameplay();
         }
 
         private static bool gameplayWanted;
@@ -93,7 +95,7 @@ namespace IslandEscape
 
         private static void UpdateGameplay()
         {
-            bool active = gameplayWanted && pauseReasons.Count == 0;
+            bool active = readySent && gameplayWanted && pauseReasons.Count == 0;
             if (active == gameplayReported) return;
             gameplayReported = active;
 #if UNITY_WEBGL && !UNITY_EDITOR
